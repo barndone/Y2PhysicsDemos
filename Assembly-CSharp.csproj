@@ -56,9 +56,11 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\FPS.cs" />
-    <Compile Include="Assets\SimpleRigidbody.cs" />
-    <Compile Include="Assets\LaunchController.cs" />
+    <Compile Include="Assets\Scripts\SimpleRigidbodyDemo\LaunchController.cs" />
+    <Compile Include="Assets\Scripts\SimpleRigidbodyDemo\SimpleRigidbody.cs" />
+    <Compile Include="Assets\Scripts\SimpleRigidbodyDemo\FPS.cs" />
+    <Compile Include="Assets\Scripts\SlimeMotor\SlimeMotor.cs" />
+    <Compile Include="Assets\Scripts\SlimeMotor\MovingPlatform.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
