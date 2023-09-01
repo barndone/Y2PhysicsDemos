@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class SlimeMotor : MonoBehaviour
 {
@@ -27,6 +28,10 @@ public class SlimeMotor : MonoBehaviour
 
     private bool levelUpWish = false;
 
+    public LineRenderer lineRend;
+
+    [SerializeField] int trajectoryVisSteps = 15;
+
     private void Awake()
     {
         if (TryGetComponent<Rigidbody>(out rb))
@@ -39,6 +44,17 @@ public class SlimeMotor : MonoBehaviour
         {
             Debug.LogError("No Rigidbody attached to " + this.name, this);
         }
+
+        if (TryGetComponent<LineRenderer>(out lineRend))
+        {
+            
+        }
+        else
+        {
+            Debug.LogError("No LineRenderer component attached to " + this.name, this);
+        }
+
+        lineRend.transform.position = transform.position;
     }
 
     private void Update()
@@ -69,6 +85,8 @@ public class SlimeMotor : MonoBehaviour
             rb.AddForce(force, ForceMode.Impulse);
             grounded = false;
             jumpWish = false;
+
+            lineRend.positionCount = 0;
         }
 
         if (levelUpWish)
@@ -92,6 +110,8 @@ public class SlimeMotor : MonoBehaviour
 
             Debug.DrawRay(firstContact.point, firstContact.normal * 5, Color.red, 5.0f);
             grounded = true;
+
+            DrawPath();
         }
     }
 
@@ -103,5 +123,37 @@ public class SlimeMotor : MonoBehaviour
         {
             levelUpWish = true;
         }
+    }
+
+    public void DrawPath()
+    {
+        lineRend.positionCount = 1;
+        lineRend.SetPosition(0, transform.position);
+
+        Vector3 initialPos = transform.position;
+
+        for (int i = 1; i <= trajectoryVisSteps; i++)
+        {
+            float timeElapsed = Time.fixedDeltaTime * i;
+
+            float xPos = CalculateXDisplacement(initialPos.x, horizontalStrength, timeElapsed);
+            float yPos = CalculateYDisplacement(initialPos.y, verticalStrength, timeElapsed, Physics.gravity.y);
+
+            //TODO: project along direction vector
+            Vector3 point = new(xPos, yPos, 0);
+
+            lineRend.positionCount++;
+            lineRend.SetPosition(lineRend.positionCount - 1, point);
+        }
+    }
+
+    public float CalculateXDisplacement(float initialXPosition, float initialXVelocity, float timeStep)
+    {
+        return initialXPosition + initialXVelocity * timeStep;
+    }
+
+    public float CalculateYDisplacement(float initialYPosition, float initialYVelocity, float timeStep, float gravity)
+    {
+        return initialYPosition + (initialYVelocity * timeStep) + (1 / 2) * (gravity * Mathf.Pow(timeStep, 2));
     }
 }
