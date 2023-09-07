@@ -60,14 +60,14 @@
     <Compile Include="Assets\Scripts\SlimeMotor\SlimePicker.cs" />
     <Compile Include="Assets\Scripts\SimulatedPlayerController\SimulatedMotor.cs" />
     <Compile Include="Assets\Scripts\SlimeMotor\SlimeMotor.cs" />
+    <Compile Include="Assets\Scripts\SimulatedPlayerController\ConstantForceVolume.cs" />
     <Compile Include="Assets\Scripts\SimpleRigidbodyDemo\LaunchController.cs" />
     <Compile Include="Assets\Scripts\SimpleRigidbodyDemo\SimpleRigidbody.cs" />
     <Compile Include="Assets\Scripts\SlimeMotor\SlimePost.cs" />
     <Compile Include="Assets\Scripts\SimpleRigidbodyDemo\FPS.cs" />
     <Compile Include="Assets\Scripts\KinematicPlayerController\KinematicMotor.cs" />
-    <Compile Include="Assets\Scripts\SlimeMotor\MovingPlatform.cs" />
-    <Compile Include="Assets\Scripts\SimulatedPlayerController\ConstantForceVolume.cs" />
     <Compile Include="Assets\Scripts\SlimeRTS\FPSCameraController.cs" />
+    <Compile Include="Assets\Scripts\SlimeMotor\MovingPlatform.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 public class SlimeMotor : MonoBehaviour
 {
@@ -75,6 +71,13 @@ public class SlimeMotor : MonoBehaviour
 
     private void FixedUpdate()
     {
+        destinationDirection = (destination.position - rb.position).normalized;
+
+        if (grounded)
+        {
+            DrawPath();
+        }
+
         if (jumpWish)
         {
             destinationDirection = (destination.position - rb.position).normalized;
@@ -85,8 +88,6 @@ public class SlimeMotor : MonoBehaviour
             rb.AddForce(force, ForceMode.Impulse);
             grounded = false;
             jumpWish = false;
-
-            lineRend.positionCount = 0;
         }
 
         if (levelUpWish)
@@ -130,20 +131,21 @@ public class SlimeMotor : MonoBehaviour
         lineRend.positionCount = 1;
         lineRend.SetPosition(0, transform.position);
 
-        Vector3 initialPos = transform.position;
+        float gravity = Physics.gravity.y;
+        float airTime = CalculateTimeToLand(verticalStrength, gravity);
+        float timeElapsed = 0.0f;
 
         for (int i = 1; i <= trajectoryVisSteps; i++)
         {
-            float timeElapsed = Time.fixedDeltaTime * i;
-
-            float xPos = CalculateXDisplacement(initialPos.x, horizontalStrength, timeElapsed);
-            float yPos = CalculateYDisplacement(initialPos.y, verticalStrength, timeElapsed, Physics.gravity.y);
-
-            //TODO: project along direction vector
-            Vector3 point = new(xPos, yPos, 0);
+            timeElapsed += airTime / trajectoryVisSteps;
+            float deltaXPos = CalculateXDisplacement(0, horizontalStrength, timeElapsed);
+            float deltaYPos = CalculateYDisplacement(0, verticalStrength, timeElapsed, gravity);
+            Vector2 xzPositions = Vector2.Scale(new Vector2(destinationDirection.x, destinationDirection.z), new Vector2(deltaXPos, deltaXPos));
+            Vector3 point = new(xzPositions.x, deltaYPos, xzPositions.y);
+            Vector3 worldSpacePoint = transform.position + point;
 
             lineRend.positionCount++;
-            lineRend.SetPosition(lineRend.positionCount - 1, point);
+            lineRend.SetPosition(lineRend.positionCount - 1, worldSpacePoint);
         }
     }
 
@@ -154,6 +156,12 @@ public class SlimeMotor : MonoBehaviour
 
     public float CalculateYDisplacement(float initialYPosition, float initialYVelocity, float timeStep, float gravity)
     {
-        return initialYPosition + (initialYVelocity * timeStep) + (1 / 2) * (gravity * Mathf.Pow(timeStep, 2));
+        //  pro tip for future brandon, never do (1 / 2) unless you specify it is a float because it will truncate to 0 you idiot
+        return initialYPosition + (initialYVelocity * timeStep) + (0.5f * (gravity * Mathf.Pow(timeStep, 2)));
+    }
+
+    public float CalculateTimeToLand(float initialYVelocity, float gravity)
+    {
+        return (-initialYVelocity - Mathf.Sqrt(Mathf.Pow(initialYVelocity, 2)))/(gravity);
     }
 }
