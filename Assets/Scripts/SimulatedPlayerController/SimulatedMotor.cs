@@ -96,10 +96,10 @@ public class SimulatedMotor : MonoBehaviour
 
     private void HandleMovement(InputAction.CallbackContext obj)
     {
-
         if (obj.performed)
         {
             Vector3 moveInput = obj.ReadValue<Vector2>();
+
             moveWish.x = moveInput.x;
             moveWish.z = moveInput.y;
         }
@@ -156,6 +156,9 @@ public class SimulatedMotor : MonoBehaviour
     //  apply changes to physics object
     private void FixedUpdate()
     {
+        // TODO: rotate move-wish
+        //  grab a quaternion of the yaw to multiply against the move wish!
+
         Vector3 projectedVelocity = rb.velocity;
 
         //  apply friction
