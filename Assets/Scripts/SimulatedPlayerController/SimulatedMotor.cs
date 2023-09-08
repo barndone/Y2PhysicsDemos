@@ -156,8 +156,11 @@ public class SimulatedMotor : MonoBehaviour
     //  apply changes to physics object
     private void FixedUpdate()
     {
-        // TODO: rotate move-wish
-        //  grab a quaternion of the yaw to multiply against the move wish!
+        //  // TODO: rotate move-wish
+        //  //  grab a quaternion of the yaw to multiply against the move wish!
+        //  
+        //  var rot = transform.rotation.e;
+        //  var yaw = GetYaw(rot);
 
         Vector3 projectedVelocity = rb.velocity;
 
@@ -187,7 +190,9 @@ public class SimulatedMotor : MonoBehaviour
             accelerationMagnitude = maxSpeed - projectedMagnitude;
         }
 
-        projectedVelocity += moveWish * accelerationMagnitude;
+        //moveWish = Vector2.Scale(moveWish, transform.forward);
+
+        projectedVelocity += accelerationMagnitude * (Quaternion.LookRotation(transform.forward, transform.up) * moveWish);
 
 
         //  handle gravity
@@ -241,4 +246,11 @@ public class SimulatedMotor : MonoBehaviour
         // update player velocity
         rb.velocity = projectedVelocity;
     }
+
+    //  //  thanks to this blog post by minahito for the formula for calculating yaw given a quaternion:
+    //  http://sunday-lab.blogspot.com/2008/04/get-pitch-yaw-roll-from-quaternion.html
+    //  private float GetYaw(Quaternion rot)
+    //  {
+    //      return Mathf.Asin(-2f * (rot.x * rot.z - rot.w * rot.y));
+    //  }
 }

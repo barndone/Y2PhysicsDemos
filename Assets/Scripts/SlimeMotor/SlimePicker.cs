@@ -7,12 +7,15 @@ using UnityEngine;
 public class SlimePicker : MonoBehaviour
 {
     [SerializeField] LayerMask slimeLayer;
+    [SerializeField] LayerMask groundLayer;
     
     Camera cam;
     
     Vector3 mousePos = new Vector3(0,0,0);
 
-    [SerializeField] SlimeMotor activeSlime = null;
+    [SerializeField] SlimeMotor[] activeSlimes = new SlimeMotor[10];
+    
+    [SerializeField] int selectedSlimes = 0;
 
     [SerializeField] float explosionRadius = 2.0f;
     [SerializeField] float explosionForce = 4.0f;
@@ -23,9 +26,34 @@ public class SlimePicker : MonoBehaviour
     bool selectWish = false;
     bool explosionWish = false;
 
+    bool heldLastFrame = false;
+    public bool multiSelectWish = false;
+
+    [SerializeField] GameObject multiSelectionVisualizer;
+    [SerializeField] float      multiSelectGrowthRate = 1.25f;
+
+    Vector3 defaultVisualizerScaler;
+    float visualizerYOffset;
+
+    [SerializeField] float maxVisualizerRadius = 10.0f;
+
+    public static SlimePicker instance;
+
     void Awake()
     {
-        cam = GetComponent<Camera>();    
+        if (!instance)
+        {
+            instance = this;
+        }
+
+        else
+        {
+            Destroy(gameObject);
+        }
+
+        cam = GetComponent<Camera>();
+        defaultVisualizerScaler = multiSelectionVisualizer.transform.localScale;
+        visualizerYOffset = multiSelectionVisualizer.transform.position.y;
     }
 
     private void Update()
@@ -37,13 +65,22 @@ public class SlimePicker : MonoBehaviour
             selectWish = true;
         }
 
+        if (heldLastFrame && Input.GetMouseButton(0))
+        {
+            multiSelectWish = true;
+            heldLastFrame = false;
+        }
+
+        if (Input.GetMouseButtonUp(0) && multiSelectWish)
+        {
+            multiSelectWish = false;
+            multiSelectionVisualizer.transform.localScale = defaultVisualizerScaler;
+        }
+
         if (Input.GetMouseButtonDown(1))
         {
-            if (activeSlime != null)
-            {
-                activeSlime = null;
-                Debug.Log("Slime selection cleared.");
-            }
+            selectedSlimes = 0;
+            Debug.Log("Slime selection cleared.");
         }
 
         if (Input.GetMouseButtonDown(2))
@@ -54,18 +91,42 @@ public class SlimePicker : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (selectWish)
+        if (multiSelectWish)
         {
+
+            if (multiSelectionVisualizer.transform.lossyScale.x <= maxVisualizerRadius)
+            {
+                var scale = multiSelectionVisualizer.transform.lossyScale;
+                scale.x = scale.z += (multiSelectGrowthRate * Time.deltaTime);
+
+                multiSelectionVisualizer.transform.localScale = scale;
+            }
+
             Ray ray = cam.ScreenPointToRay(mousePos);
             RaycastHit hit;
 
-            if (activeSlime != null)
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
+            {
+                var transform = hit.point;
+                transform.y = visualizerYOffset;
+                multiSelectionVisualizer.transform.position = transform;
+            }
+        }
+
+        else if (selectWish)
+        {
+            heldLastFrame = true;
+            Ray ray = cam.ScreenPointToRay(mousePos);
+            RaycastHit hit;
+
+            if (selectedSlimes != 0)
             {
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity))
                 {
-                    Debug.Log("Destination changed from: " + activeSlime.destination.position);
-                    activeSlime.destination.position = hit.point;
-                    Debug.Log("Destination changed to: " + activeSlime.destination.position);
+                    for (int i = 0; i < selectedSlimes; i++)
+                    {
+                        activeSlimes[i].destination.position = hit.point;
+                    }
                 }
             }
 
@@ -75,7 +136,10 @@ public class SlimePicker : MonoBehaviour
                 {
                     Debug.Log("Hit " + hit.transform.gameObject.name, hit.transform.gameObject);
 
-                    activeSlime = hit.transform.gameObject.GetComponent<SlimeMotor>();
+                    var hitSlime = hit.transform.gameObject.GetComponent<SlimeMotor>();
+
+                    activeSlimes[selectedSlimes] = hitSlime;
+                    selectedSlimes++;
                 }
             }
 
@@ -125,5 +189,11 @@ public class SlimePicker : MonoBehaviour
 
             explosionWish = false;
         }
+    }
+
+    public void AddOverlappingSlimeMotor(SlimeMotor slime)
+    {
+        activeSlimes[selectedSlimes] = slime;
+        selectedSlimes++;
     }
 }

@@ -28,6 +28,14 @@ public class SlimeMotor : MonoBehaviour
 
     [SerializeField] int trajectoryVisSteps = 15;
 
+    float slimeMass;
+    public float SlimeMass
+    {
+        get => slimeMass;
+        set => slimeMass = value;
+    }
+
+
     private void Awake()
     {
         if (TryGetComponent<Rigidbody>(out rb))
