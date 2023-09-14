@@ -13,7 +13,7 @@ public class SlimePost : MonoBehaviour
         {
             SlimeMotor slime = other.gameObject.GetComponent<SlimeMotor>();
 
-            slime.destination.position = transform.position;
+            slime.SetDestination(transform);
         }
     }
 

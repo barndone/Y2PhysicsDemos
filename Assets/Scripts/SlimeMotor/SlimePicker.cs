@@ -13,9 +13,9 @@ public class SlimePicker : MonoBehaviour
     
     Vector3 mousePos = new Vector3(0,0,0);
 
-    [SerializeField] SlimeMotor[] activeSlimes = new SlimeMotor[10];
+    [SerializeField] List<SlimeMotor> slimeList = new();
     
-    [SerializeField] int selectedSlimes = 0;
+    //[SerializeField] int selectedSlimes = 0;
 
     [SerializeField] float explosionRadius = 2.0f;
     [SerializeField] float explosionForce = 4.0f;
@@ -62,6 +62,7 @@ public class SlimePicker : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
+            //slimeList.Clear();
             selectWish = true;
         }
 
@@ -79,7 +80,7 @@ public class SlimePicker : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            selectedSlimes = 0;
+            slimeList.Clear();
             Debug.Log("Slime selection cleared.");
         }
 
@@ -119,13 +120,25 @@ public class SlimePicker : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(mousePos);
             RaycastHit hit;
 
-            if (selectedSlimes != 0)
+            if (slimeList.Count != 0)
             {
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity))
                 {
-                    for (int i = 0; i < selectedSlimes; i++)
+
+                    if (CheckForRigidbodyFromHit(hit))
                     {
-                        activeSlimes[i].destination.position = hit.point;
+                        foreach (var slime in slimeList)
+                        {
+                            slime.SetDestination(hit.collider.gameObject.transform);
+                        }
+                    }
+
+                    else
+                    {
+                        foreach (var slime in slimeList)
+                        {
+                            slime.SetDestination(hit.point);
+                        }
                     }
                 }
             }
@@ -137,9 +150,7 @@ public class SlimePicker : MonoBehaviour
                     Debug.Log("Hit " + hit.transform.gameObject.name, hit.transform.gameObject);
 
                     var hitSlime = hit.transform.gameObject.GetComponent<SlimeMotor>();
-
-                    activeSlimes[selectedSlimes] = hitSlime;
-                    selectedSlimes++;
+                    AddOverlappingSlimeMotor(hitSlime);
                 }
             }
 
@@ -184,16 +195,25 @@ public class SlimePicker : MonoBehaviour
             }
 
             Debug.Log(overlaps);
-
-
-
             explosionWish = false;
         }
     }
 
     public void AddOverlappingSlimeMotor(SlimeMotor slime)
     {
-        activeSlimes[selectedSlimes] = slime;
-        selectedSlimes++;
+        //  checks if this slime is NOT in the list currently
+        //  due to the amount of slimes that will exist in the game, the list should never reach sizes where this becomes wildly inefficient
+        if (!slimeList.Contains(slime))
+        {
+            //  if this slime isn't we add it!
+            slimeList.Add(slime);
+        }
+    }
+
+    public bool CheckForRigidbodyFromHit(RaycastHit hit)
+    {
+        var hitObj = hit.collider.gameObject;
+
+        return hitObj.TryGetComponent<Rigidbody>(out var rb);
     }
 }

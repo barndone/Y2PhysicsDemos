@@ -9,7 +9,11 @@ public class SlimeMotor : MonoBehaviour
 
     public Rigidbody rb;
 
-    public Transform destination;
+
+    [SerializeField] bool UseTransformTargeting = true;
+    [SerializeField] Transform destinationTarget;
+    private Vector3 destinationPos;
+
     [SerializeField] Vector3 destinationDirection;
 
     [SerializeField] LayerMask groundLayer;
@@ -51,7 +55,7 @@ public class SlimeMotor : MonoBehaviour
 
         if (TryGetComponent<LineRenderer>(out lineRend))
         {
-            
+
         }
         else
         {
@@ -79,7 +83,7 @@ public class SlimeMotor : MonoBehaviour
 
     private void FixedUpdate()
     {
-        destinationDirection = (destination.position - rb.position).normalized;
+        destinationDirection = (GetDestinationPosition(UseTransformTargeting) - rb.position).normalized;
 
         if (grounded)
         {
@@ -88,7 +92,7 @@ public class SlimeMotor : MonoBehaviour
 
         if (jumpWish)
         {
-            destinationDirection = (destination.position - rb.position).normalized;
+            destinationDirection = (GetDestinationPosition(UseTransformTargeting) - rb.position).normalized;
             jumpTimer = 0.0f;
 
             var force = new Vector3(destinationDirection.x * horizontalStrength, verticalStrength, destinationDirection.z * horizontalStrength);
@@ -170,6 +174,32 @@ public class SlimeMotor : MonoBehaviour
 
     public float CalculateTimeToLand(float initialYVelocity, float gravity)
     {
-        return (-initialYVelocity - Mathf.Sqrt(Mathf.Pow(initialYVelocity, 2)))/(gravity);
+        return (-initialYVelocity - Mathf.Sqrt(Mathf.Pow(initialYVelocity, 2))) / (gravity);
+    }
+
+    public void SetDestination(Vector3 targetPosition)
+    {
+        UseTransformTargeting = false;
+        destinationTarget = null;
+        destinationPos = targetPosition;
+    }
+
+    public void SetDestination(Transform targetTransform)
+    {
+        UseTransformTargeting = true;
+        destinationTarget = targetTransform;
+        destinationPos = Vector3.zero;
+    }
+
+    public Vector3 GetDestinationPosition(bool useTransform)
+    {
+        if (useTransform)
+        {
+            return destinationTarget.position;
+        }
+        else
+        {
+            return destinationPos;
+        }
     }
 }
