@@ -58,23 +58,23 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\SlimeMotor\SlimePen.cs" />
     <Compile Include="Assets\Scripts\SlimeMotor\SlimePicker.cs" />
+    <Compile Include="Assets\Scripts\SlimeRTS\JellyDeformation.cs" />
     <Compile Include="Assets\Scripts\SimulatedPlayerController\SimulatedMotor.cs" />
     <Compile Include="Assets\Scripts\SlimeMotor\SlimeMotor.cs" />
+    <Compile Include="Assets\Scripts\SlimeRTS\Slime.cs" />
     <Compile Include="Assets\Scripts\SimulatedPlayerController\ConstantForceVolume.cs" />
     <Compile Include="Assets\Scripts\SimpleRigidbodyDemo\LaunchController.cs" />
     <Compile Include="Assets\Scripts\SimpleRigidbodyDemo\SimpleRigidbody.cs" />
     <Compile Include="Assets\Scripts\SlimeMotor\SlimePost.cs" />
     <Compile Include="Assets\Scripts\SlimeMotor\SlimeLauncher.cs" />
     <Compile Include="Assets\Scripts\SimpleRigidbodyDemo\FPS.cs" />
+    <Compile Include="Assets\Scripts\SlimeRTS\GameManager.cs" />
     <Compile Include="Assets\Scripts\SlimeMotor\SlimeGate.cs" />
     <Compile Include="Assets\Scripts\SlimeRTS\MultiSelection.cs" />
     <Compile Include="Assets\Scripts\KinematicPlayerController\KinematicMotor.cs" />
     <Compile Include="Assets\Scripts\SlimeRTS\FPSCameraController.cs" />
     <Compile Include="Assets\Scripts\SlimeMotor\MovingPlatform.cs" />
-    <Compile Include="Assets\Scripts\SlimeRTS\JellyDeformation.cs" />
-    <Compile Include="Assets\Scripts\SlimeRTS\GameManager.cs" />
     <Compile Include="Assets\Scripts\SlimeRTS\UIManager.cs" />
-    <Compile Include="Assets\Scripts\SlimeRTS\Slime.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -770,8 +770,8 @@
     <Reference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection">
       <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.VisualScripting.Flow">
-      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
+    <Reference Include="Unity.Postprocessing.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
@@ -784,6 +784,9 @@
     </Reference>
     <Reference Include="Unity.PlasticSCM.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.VisualScripting.Flow">
+      <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
@@ -800,6 +803,9 @@
     <Reference Include="Unity.Services.Core.Analytics">
       <HintPath>Library\ScriptAssemblies\Unity.Services.Core.Analytics.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Postprocessing.Runtime">
+      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VisualScripting.Shared.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
     </Reference>
@@ -814,12 +820,6 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.State">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Postprocessing.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>Library\ScriptAssemblies\Unity.Postprocessing.Runtime.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
