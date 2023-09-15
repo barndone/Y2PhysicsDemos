@@ -72,10 +72,10 @@
     <Compile Include="Assets\Scripts\SlimeMotor\SlimeGate.cs" />
     <Compile Include="Assets\Scripts\SlimeRTS\MultiSelection.cs" />
     <Compile Include="Assets\Scripts\KinematicPlayerController\KinematicMotor.cs" />
+    <Compile Include="Assets\Scripts\SlimeRTS\RagdollUtils.cs" />
     <Compile Include="Assets\Scripts\SlimeRTS\FPSCameraController.cs" />
     <Compile Include="Assets\Scripts\SlimeMotor\MovingPlatform.cs" />
     <Compile Include="Assets\Scripts\SlimeRTS\UIManager.cs" />
-    <Compile Include="Assets\Scripts\SlimeRTS\RagdollUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

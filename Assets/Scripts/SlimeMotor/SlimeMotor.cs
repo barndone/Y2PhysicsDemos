@@ -38,6 +38,8 @@ public class SlimeMotor : MonoBehaviour
         get => slimeMass;
         set => slimeMass = value;
     }
+
+    public bool alive = true;
     private void Awake()
     {
         if (TryGetComponent<Rigidbody>(out rb))
@@ -65,18 +67,22 @@ public class SlimeMotor : MonoBehaviour
 
     private void Update()
     {
-        if (grounded)
+        if (alive)
         {
-            if (jumpTimer >= jumpDelay && !jumpWish)
+            if (grounded)
             {
-                jumpWish = true;
-            }
+                if (jumpTimer >= jumpDelay && !jumpWish)
+                {
+                    jumpWish = true;
+                }
 
-            else
-            {
-                jumpTimer += Time.deltaTime;
+                else
+                {
+                    jumpTimer += Time.deltaTime;
+                }
             }
         }
+
     }
 
     private void FixedUpdate()

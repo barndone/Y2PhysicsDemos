@@ -21,13 +21,12 @@ public class Slime : MonoBehaviour
     private bool updateColor = false;
 
     [SerializeField] MeshRenderer rend;
+    [SerializeField] Animator animator;
 
     private void Awake()
     {
         currentHealth = maxHealth;
         currentMass = startingMass;
-
-
     }
 
     private void Start()
@@ -43,6 +42,15 @@ public class Slime : MonoBehaviour
         else
         {
             Debug.Log("Error, slime motor not attached to " + gameObject.name, this);
+        }
+
+        if (TryGetComponent<Animator>(out animator))
+        {
+            animator.enabled = false;
+        }
+        else
+        {
+            Debug.Log("Error, animator not attached to " + gameObject.name, this);
         }
     }
 
@@ -61,7 +69,6 @@ public class Slime : MonoBehaviour
                 updateColor = false;
             }
         }
-
     }
 
     public void TakeDamage(int _damage)
@@ -71,6 +78,8 @@ public class Slime : MonoBehaviour
         if (currentHealth <= 0)
         {
             GameManager.instance.AddDeadSlime(motor);
+            animator.enabled = true;
+            animator.SetTrigger("death");
         }
 
         if (currentHealth / (float)maxHealth >= .75f)
@@ -91,5 +100,10 @@ public class Slime : MonoBehaviour
         }
 
         updateColor = true;
+    }
+
+    public void DeathCleanup()
+    {
+        Destroy(gameObject);
     }
 }

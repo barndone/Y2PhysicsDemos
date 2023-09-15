@@ -148,7 +148,9 @@ public class SlimePicker : MonoBehaviour
                 Debug.Log("Hit " + hit.transform.gameObject.name, hit.transform.gameObject);
             
                 var hitSlime = hit.transform.gameObject.GetComponent<SlimeMotor>();
+
                 AddOverlappingSlimeMotor(hitSlime);
+
             }
             selectWish = false;
         }
@@ -235,7 +237,7 @@ public class SlimePicker : MonoBehaviour
     {
         //  checks if this slime is NOT in the list currently
         //  due to the amount of slimes that will exist in the game, the list should never reach sizes where this becomes wildly inefficient
-        if (!slimeList.Contains(slime))
+        if (!slimeList.Contains(slime) && slime.alive)
         {
             //  if this slime isn't we add it!
             slimeList.Add(slime);

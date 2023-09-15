@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour
     {
         //  cache the list of selected slimes in the slime picker instance
         var selectedSlimes = SlimePicker.instance.slimeList;
+        _slime.alive = false;
 
         //  if the selected slimes list contains this now dead slime
         if (selectedSlimes.Contains(_slime))
