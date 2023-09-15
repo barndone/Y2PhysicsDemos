@@ -12,10 +12,22 @@ public class Slime : MonoBehaviour
 
     private SlimeMotor motor;
 
+    [SerializeField] List<Color> slimeColors = new List<Color>();
+
+    [SerializeField] Color currentColor;
+    [SerializeField] Color targetColor;
+    [SerializeField] float transitionSpeed = .5f;
+
+    private bool updateColor = false;
+
+    [SerializeField] MeshRenderer rend;
+
     private void Awake()
     {
         currentHealth = maxHealth;
         currentMass = startingMass;
+
+
     }
 
     private void Start()
@@ -23,11 +35,33 @@ public class Slime : MonoBehaviour
         if (TryGetComponent<SlimeMotor>(out motor))
         {
             GameManager.instance.AddLivingSlime(motor);
+            currentColor = slimeColors[0];
+
+            TryGetComponent<MeshRenderer>(out rend);
+            rend.material.color = currentColor;
         }
         else
         {
             Debug.Log("Error, slime motor not attached to " + gameObject.name, this);
         }
+    }
+
+    private void Update()
+    {
+        if (updateColor)
+        {
+            if (currentColor != targetColor)
+            {
+                currentColor = Color.Lerp(currentColor, targetColor, transitionSpeed);
+                rend.material.color = currentColor;
+            }
+
+            if (currentColor == targetColor)
+            {
+                updateColor = false;
+            }
+        }
+
     }
 
     public void TakeDamage(int _damage)
@@ -38,5 +72,24 @@ public class Slime : MonoBehaviour
         {
             GameManager.instance.AddDeadSlime(motor);
         }
+
+        if (currentHealth / (float)maxHealth >= .75f)
+        {
+            targetColor = slimeColors[0];
+        }
+        else if (currentHealth / (float)maxHealth >= .5f)
+        {
+            targetColor = slimeColors[1];
+        }
+        else if (currentHealth / (float)maxHealth >= .25f)
+        {
+            targetColor = slimeColors[2];
+        }
+        else if (currentHealth / (float)maxHealth >= 0f)
+        {
+            targetColor = slimeColors[3];
+        }
+
+        updateColor = true;
     }
 }

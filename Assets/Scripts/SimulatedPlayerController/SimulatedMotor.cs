@@ -45,6 +45,8 @@ public class SimulatedMotor : MonoBehaviour
     [SerializeField] private bool useCustomGravity = false;
     [SerializeField] private Vector3 gravity;
 
+    [SerializeField] LayerMask playerLayer;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -156,101 +158,94 @@ public class SimulatedMotor : MonoBehaviour
     //  apply changes to physics object
     private void FixedUpdate()
     {
-        //  // TODO: rotate move-wish
-        //  //  grab a quaternion of the yaw to multiply against the move wish!
-        //  
-        //  var rot = transform.rotation.e;
-        //  var yaw = GetYaw(rot);
-
-        Vector3 projectedVelocity = rb.velocity;
-
-        //  apply friction
-        float keepY = projectedVelocity.y;
-        projectedVelocity.y = 0.0f;
-
-        float groundSpeed = projectedVelocity.magnitude;
-        if (groundSpeed != 0)
+        if (GameManager.instance.AvailableSlimes >= 1)
         {
-            float frictionAccel = groundSpeed * groundFriction * Time.deltaTime;
-            projectedVelocity *= Mathf.Max(groundSpeed - frictionAccel, 0) / groundSpeed;
-        }
+            Vector3 projectedVelocity = rb.velocity;
 
-        projectedVelocity.y = keepY;
+            //  apply friction
+            float keepY = projectedVelocity.y;
+            projectedVelocity.y = 0.0f;
 
-        float projectedMagnitude = Vector3.Dot(projectedVelocity, moveWish);
-        float accelerationMagnitude = groundAcceleration * Time.deltaTime;
-
-        if (sprintWish)
-        {
-            accelerationMagnitude *= sprintMultiplier;
-        }
-
-        if (projectedMagnitude + accelerationMagnitude > maxSpeed)
-        {
-            accelerationMagnitude = maxSpeed - projectedMagnitude;
-        }
-
-        //moveWish = Vector2.Scale(moveWish, transform.forward);
-
-        projectedVelocity += accelerationMagnitude * (Quaternion.LookRotation(transform.forward, transform.up) * moveWish);
-
-
-        //  handle gravity
-        projectedVelocity += gravity * Time.deltaTime;
-
-        // handle ground
-        Vector3 castOrigin = transform.TransformPoint(col.center);
-        float castLength = (col.height / 2.0f) - col.radius + desiredHoverDistance;
-
-        Debug.Assert(desiredHoverDistance >= 0.0f, "Hover distance is too short! must be non-negative", this);
-
-        lastGroundHitCount = Physics.SphereCastNonAlloc(
-            castOrigin, col.radius, Vector3.down, lastGroundHits, castLength, groundLayers, QueryTriggerInteraction.Ignore);
-
-        for (int i = 0; i < lastGroundHitCount; i++)
-        {
-            RaycastHit hit = lastGroundHits[i];
-
-            // our own body? skip!
-            if (hit.collider == col) { continue; }
-
-            // already inside? skip!
-            if (hit.point == Vector3.zero &&
-                hit.distance == 0.0f) { continue; }
-
-            // too steep? skip!
-            float groundAngle = Vector3.Angle(hit.normal, Vector3.up);
-            if (groundAngle > maxGroundAngle) { continue; }
-
-            isGrounded = true;
-
-            float distanceFromGround = hit.distance - col.height / 2.0f + col.radius;
-            float displacement = desiredHoverDistance - distanceFromGround;
-
-            float hoverForce = hoverStrength * displacement - hoverDamper * projectedVelocity.y;
-            rb.AddForce(Vector3.up * hoverForce);
-        }
-        //  handle jumping
-        if (jumpWish)
-        {
-            //  if we are grounded
-            if (isGrounded)
+            float groundSpeed = projectedVelocity.magnitude;
+            if (groundSpeed != 0)
             {
-                projectedVelocity.y += jumpForce;
-                isGrounded = false;
+                float frictionAccel = groundSpeed * groundFriction * Time.deltaTime;
+                projectedVelocity *= Mathf.Max(groundSpeed - frictionAccel, 0) / groundSpeed;
             }
 
-            jumpWish = false;
+            projectedVelocity.y = keepY;
+
+            float projectedMagnitude = Vector3.Dot(projectedVelocity, moveWish);
+            float accelerationMagnitude = groundAcceleration * Time.deltaTime;
+
+            if (sprintWish)
+            {
+                accelerationMagnitude *= sprintMultiplier;
+            }
+
+            if (projectedMagnitude + accelerationMagnitude > maxSpeed)
+            {
+                accelerationMagnitude = maxSpeed - projectedMagnitude;
+            }
+
+            //moveWish = Vector2.Scale(moveWish, transform.forward);
+
+            projectedVelocity += accelerationMagnitude * (Quaternion.LookRotation(transform.forward, transform.up) * moveWish);
+
+
+            //  handle gravity
+            projectedVelocity += gravity * Time.deltaTime;
+
+            // handle ground
+            Vector3 castOrigin = transform.TransformPoint(col.center);
+            float castLength = (col.height / 2.0f) - col.radius + desiredHoverDistance;
+
+            Debug.Assert(desiredHoverDistance >= 0.0f, "Hover distance is too short! must be non-negative", this);
+
+            lastGroundHitCount = Physics.SphereCastNonAlloc(
+                castOrigin, col.radius, Vector3.down, lastGroundHits, castLength, groundLayers, QueryTriggerInteraction.Ignore);
+
+            for (int i = 0; i < lastGroundHitCount; i++)
+            {
+                RaycastHit hit = lastGroundHits[i];
+
+                // our own body? skip!
+                if (hit.collider == col) { continue; }
+
+                if (1 << hit.collider.gameObject.layer == playerLayer) { continue; }
+
+
+                // already inside? skip!
+                if (hit.point == Vector3.zero &&
+                    hit.distance == 0.0f) { continue; }
+
+                // too steep? skip!
+                float groundAngle = Vector3.Angle(hit.normal, Vector3.up);
+                if (groundAngle > maxGroundAngle) { continue; }
+
+                isGrounded = true;
+
+                float distanceFromGround = hit.distance - col.height / 2.0f + col.radius;
+                float displacement = desiredHoverDistance - distanceFromGround;
+
+                float hoverForce = hoverStrength * displacement - hoverDamper * projectedVelocity.y;
+                rb.AddForce(Vector3.up * hoverForce);
+            }
+            //  handle jumping
+            if (jumpWish)
+            {
+                //  if we are grounded
+                if (isGrounded)
+                {
+                    projectedVelocity.y += jumpForce;
+                    isGrounded = false;
+                }
+
+                jumpWish = false;
+            }
+
+            // update player velocity
+            rb.velocity = projectedVelocity;
         }
-
-        // update player velocity
-        rb.velocity = projectedVelocity;
     }
-
-    //  //  thanks to this blog post by minahito for the formula for calculating yaw given a quaternion:
-    //  http://sunday-lab.blogspot.com/2008/04/get-pitch-yaw-roll-from-quaternion.html
-    //  private float GetYaw(Quaternion rot)
-    //  {
-    //      return Mathf.Asin(-2f * (rot.x * rot.z - rot.w * rot.y));
-    //  }
 }

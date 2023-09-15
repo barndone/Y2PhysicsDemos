@@ -38,8 +38,6 @@ public class SlimeMotor : MonoBehaviour
         get => slimeMass;
         set => slimeMass = value;
     }
-
-
     private void Awake()
     {
         if (TryGetComponent<Rigidbody>(out rb))

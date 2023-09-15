@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     //  tracks if the game is over
     public bool gameOver = false;
 
+    [SerializeField] Animator animator;
+
     private void Awake()
     {
         if (!instance)
@@ -31,6 +33,14 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (gameOver)
+        {
+            HandleGameOver();
         }
     }
 
@@ -76,6 +86,24 @@ public class GameManager : MonoBehaviour
         {
             //  game over
             gameOver = true;
+        }
+    }
+
+    public void HandleGameOver()
+    {
+        //  case 1: all of our slimes are dead
+        //  loss.meme
+        if (AvailableSlimes <= 0)
+        {
+            RagdollUtils.EnableRagdoll();
+            animator.enabled = false;
+        }
+
+        //  otherwise, we have at LEAST 1 slime and all the joints are defeated
+        //  winner_winner_chicken_dinner.wav
+        else
+        {
+
         }
     }
 }

@@ -27,12 +27,11 @@ public class SlimePicker : MonoBehaviour
 
     Collider[] slimesInExplosionRange = new Collider[32];
 
-    bool selectWish = false;
-    bool explosionWish = false;
-    bool additiveSelectWish = false;
-    bool commandWish = false;
-
-    bool heldLastFrame = false;
+    [SerializeField]bool selectWish = false;
+    [SerializeField]bool explosionWish = false;
+    [SerializeField]bool additiveSelectWish = false;
+    [SerializeField]bool commandWish = false;
+    [SerializeField]bool heldLastFrame = false;
     public bool multiSelectWish = false;
 
     [SerializeField] GameObject multiSelectionVisualizer;
@@ -91,6 +90,7 @@ public class SlimePicker : MonoBehaviour
         {
             multiSelectWish = false;
             multiSelectionVisualizer.transform.localScale = defaultVisualizerScaler;
+            multiSelectionVisualizer.SetActive(false);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -108,7 +108,10 @@ public class SlimePicker : MonoBehaviour
     {
         if (multiSelectWish)
         {
-
+            if (!multiSelectionVisualizer.activeSelf)
+            {
+                multiSelectionVisualizer.SetActive(true);
+            }
             if (multiSelectionVisualizer.transform.lossyScale.x <= maxVisualizerRadius)
             {
                 var scale = multiSelectionVisualizer.transform.lossyScale;
@@ -133,7 +136,7 @@ public class SlimePicker : MonoBehaviour
             if (!additiveSelectWish)
             {
                 slimeList.Clear();
-                Debug.Log("Shift not held while selecting, so list cleared");
+                Debug.Log("Shift not held while selecting, list cleared");
             }
 
             heldLastFrame = true;
@@ -192,7 +195,7 @@ public class SlimePicker : MonoBehaviour
                 }
             }
 
-            Debug.Log(overlaps);
+            //Debug.Log(overlaps);
             explosionWish = false;
         }
 
