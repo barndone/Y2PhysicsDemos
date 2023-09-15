@@ -60,7 +60,7 @@ public class Slime : MonoBehaviour
         {
             if (currentColor != targetColor)
             {
-                currentColor = Color.Lerp(currentColor, targetColor, transitionSpeed);
+                currentColor = Color.Lerp(currentColor, targetColor, transitionSpeed * Time.deltaTime);
                 rend.material.color = currentColor;
             }
 

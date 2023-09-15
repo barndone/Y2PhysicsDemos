@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 3146749240762746973}
   - component: {fileID: 3146749240762746972}
   - component: {fileID: 3146749240762746975}
+  - component: {fileID: 576849718586049930}
   m_Layer: 3
   m_Name: SlimeMotor
   m_TagString: Untagged
@@ -129,6 +130,7 @@ MonoBehaviour:
   scaleIncrease: 1.5
   lineRend: {fileID: 0}
   trajectoryVisSteps: 7
+  alive: 1
 --- !u!54 &3146749240762746970
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -290,3 +292,24 @@ MonoBehaviour:
   targetColor: {r: 0, g: 0, b: 0, a: 0}
   transitionSpeed: 0.5
   rend: {fileID: 0}
+  animator: {fileID: 0}
+--- !u!95 &576849718586049930
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146749240762746974}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ea2d5a09e6a548c42a030ad1bcdf005b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
