@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
 
 public class SlimePicker : MonoBehaviour
 {
     [SerializeField] LayerMask slimeLayer;
     [SerializeField] LayerMask groundLayer;
-    
-    Camera cam;
-    
-    Vector3 mousePos = new Vector3(0,0,0);
 
-    [SerializeField] List<SlimeMotor> slimeList = new();
+    Camera cam;
+
+    Vector3 mousePos = new Vector3(0, 0, 0);
+
+    public List<SlimeMotor> slimeList = new();
+
+    public int SelectedSlimes { get { return slimeList.Count; } }
+
     
     //[SerializeField] int selectedSlimes = 0;
 
@@ -25,6 +29,8 @@ public class SlimePicker : MonoBehaviour
 
     bool selectWish = false;
     bool explosionWish = false;
+    bool additiveSelectWish = false;
+    bool commandWish = false;
 
     bool heldLastFrame = false;
     public bool multiSelectWish = false;
@@ -62,7 +68,16 @@ public class SlimePicker : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            //slimeList.Clear();
+
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                additiveSelectWish = true;
+            }
+            else
+            {
+                additiveSelectWish = false;
+            }
+
             selectWish = true;
         }
 
@@ -80,8 +95,7 @@ public class SlimePicker : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            slimeList.Clear();
-            Debug.Log("Slime selection cleared.");
+            commandWish = true;
         }
 
         if (Input.GetMouseButtonDown(2))
@@ -116,44 +130,23 @@ public class SlimePicker : MonoBehaviour
 
         else if (selectWish)
         {
+            if (!additiveSelectWish)
+            {
+                slimeList.Clear();
+                Debug.Log("Shift not held while selecting, so list cleared");
+            }
+
             heldLastFrame = true;
             Ray ray = cam.ScreenPointToRay(mousePos);
             RaycastHit hit;
 
-            if (slimeList.Count != 0)
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, slimeLayer))
             {
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-                {
-
-                    if (CheckForRigidbodyFromHit(hit))
-                    {
-                        foreach (var slime in slimeList)
-                        {
-                            slime.SetDestination(hit.collider.gameObject.transform);
-                        }
-                    }
-
-                    else
-                    {
-                        foreach (var slime in slimeList)
-                        {
-                            slime.SetDestination(hit.point);
-                        }
-                    }
-                }
+                Debug.Log("Hit " + hit.transform.gameObject.name, hit.transform.gameObject);
+            
+                var hitSlime = hit.transform.gameObject.GetComponent<SlimeMotor>();
+                AddOverlappingSlimeMotor(hitSlime);
             }
-
-            else
-            {
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, slimeLayer))
-                {
-                    Debug.Log("Hit " + hit.transform.gameObject.name, hit.transform.gameObject);
-
-                    var hitSlime = hit.transform.gameObject.GetComponent<SlimeMotor>();
-                    AddOverlappingSlimeMotor(hitSlime);
-                }
-            }
-
             selectWish = false;
         }
 
@@ -184,6 +177,11 @@ public class SlimePicker : MonoBehaviour
                         {
                             slimeRB.AddExplosionForce(explosionForce, hit.point, explosionRadius, explosionVerticalImpulse, ForceMode.Impulse);
 
+                            if (slimeRB.gameObject.TryGetComponent<Slime>(out var hitSlime))
+                            {
+                                hitSlime.TakeDamage(1);
+                            }
+
                             Debug.Log("Explosion applied to: " + slimeRB.gameObject.name, slimeRB.gameObject);
                         }
                         else
@@ -196,6 +194,37 @@ public class SlimePicker : MonoBehaviour
 
             Debug.Log(overlaps);
             explosionWish = false;
+        }
+
+        if (commandWish)
+        {
+            if (slimeList.Count != 0)
+            {
+                Ray ray = cam.ScreenPointToRay(mousePos);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                {
+
+                    if (CheckForRigidbodyFromHit(hit))
+                    {
+                        foreach (var slime in slimeList)
+                        {
+                            slime.SetDestination(hit.collider.gameObject.transform);
+                        }
+                    }
+
+                    else
+                    {
+                        foreach (var slime in slimeList)
+                        {
+                            slime.SetDestination(hit.point);
+                        }
+                    }
+                }
+            }
+
+            commandWish = false;
         }
     }
 

@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 8447435713954849383}
   - component: {fileID: 8447435713954849388}
   - component: {fileID: 841304648}
+  - component: {fileID: 3278772}
+  - component: {fileID: 3278773}
   m_Layer: 3
   m_Name: slime
   m_TagString: Untagged
@@ -44,7 +46,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8447435713954849382}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 6632505568810650000, guid: 54e36fc3cc3dc794b9f8856e9536e24d, type: 3}
 --- !u!23 &8447435713954849377
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -116,7 +118,8 @@ MonoBehaviour:
   horizontalStrength: 2
   jumpDelay: 3
   rb: {fileID: 0}
-  destination: {fileID: 0}
+  UseTransformTargeting: 1
+  destinationTarget: {fileID: 0}
   destinationDirection: {x: 0, y: 0, z: 0}
   groundLayer:
     serializedVersion: 2
@@ -241,8 +244,38 @@ LineRenderer:
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
-    textureMode: 1
+    textureMode: 3
     shadowBias: 0.5
     generateLightingData: 0
-  m_UseWorldSpace: 0
+  m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &3278772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8447435713954849382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b52472cb73ccb3a4bba1465c9c11faef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bounceSpeed: 20
+  fallForce: 10
+  stiffness: 0.5
+  maxDisplacement: 0.5
+--- !u!114 &3278773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8447435713954849382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39acd186837bf0f4bbdb5efec49fbaab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 5
+  startingMass: 10
