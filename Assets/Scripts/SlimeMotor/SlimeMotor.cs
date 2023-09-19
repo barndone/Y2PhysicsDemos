@@ -14,6 +14,7 @@ public class SlimeMotor : MonoBehaviour
     [SerializeField] Transform destinationTarget;
     private Vector3 destinationPos;
 
+    public GameObject Target { get { return Target; } private set { Target = value; } }
     [SerializeField] Vector3 destinationDirection;
 
     [SerializeField] LayerMask groundLayer;
@@ -31,13 +32,6 @@ public class SlimeMotor : MonoBehaviour
     public LineRenderer lineRend;
 
     [SerializeField] int trajectoryVisSteps = 15;
-
-    float slimeMass;
-    public float SlimeMass
-    {
-        get => slimeMass;
-        set => slimeMass = value;
-    }
 
     public bool alive = true;
     private void Awake()
@@ -185,6 +179,7 @@ public class SlimeMotor : MonoBehaviour
     {
         UseTransformTargeting = false;
         destinationTarget = null;
+        Target = null;
         destinationPos = targetPosition;
     }
 
@@ -192,6 +187,7 @@ public class SlimeMotor : MonoBehaviour
     {
         UseTransformTargeting = true;
         destinationTarget = targetTransform;
+        Target = targetTransform.gameObject;
         destinationPos = Vector3.zero;
     }
 

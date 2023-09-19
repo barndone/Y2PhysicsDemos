@@ -126,7 +126,7 @@ public class SlimePicker : MonoBehaviour
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
             {
                 var transform = hit.point;
-                transform.y = visualizerYOffset;
+                transform.y += multiSelectionVisualizer.transform.localScale.y / 2f;
                 multiSelectionVisualizer.transform.position = transform;
             }
         }

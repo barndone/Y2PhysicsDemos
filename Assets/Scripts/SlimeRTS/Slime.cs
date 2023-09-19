@@ -2,14 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Slime : MonoBehaviour
+public class Slime : MonoBehaviour, IDamageable, IHealable
 {
+    //  max possible health for the slime
     [SerializeField] int maxHealth = 5;
+    //  starting mass of the slime
     [SerializeField] float startingMass = 10f;
 
-    public int currentHealth;
-    public float currentMass;
+    //  public get and private set field 
+    public int CurrentHealth
+    {
+        get { return CurrentHealth; }
+        private set { CurrentHealth = value; }
+    }
 
+
+    public float CurrentMass
+    {
+        get { return CurrentMass; }
+        private set { CurrentMass = value; }
+    }
     private SlimeMotor motor;
 
     [SerializeField] List<Color> slimeColors = new List<Color>();
@@ -25,8 +37,8 @@ public class Slime : MonoBehaviour
 
     private void Awake()
     {
-        currentHealth = maxHealth;
-        currentMass = startingMass;
+        CurrentHealth = maxHealth;
+        CurrentMass = startingMass;
     }
 
     private void Start()
@@ -71,36 +83,48 @@ public class Slime : MonoBehaviour
         }
     }
 
+    //  implemented to satisfy IDamageable
     public void TakeDamage(int _damage)
     {
-        currentHealth -= _damage;
+        CurrentHealth -= _damage;
 
-        if (currentHealth <= 0)
+        if (CurrentHealth <= 0)
         {
             GameManager.instance.AddDeadSlime(motor);
             animator.enabled = true;
             animator.SetTrigger("death");
         }
 
-        if (currentHealth / (float)maxHealth >= .75f)
+        if (CurrentHealth / (float)maxHealth >= .75f)
         {
             targetColor = slimeColors[0];
         }
-        else if (currentHealth / (float)maxHealth >= .5f)
+        else if (CurrentHealth / (float)maxHealth >= .5f)
         {
             targetColor = slimeColors[1];
         }
-        else if (currentHealth / (float)maxHealth >= .25f)
+        else if (CurrentHealth / (float)maxHealth >= .25f)
         {
             targetColor = slimeColors[2];
         }
-        else if (currentHealth / (float)maxHealth >= 0f)
+        else if (CurrentHealth / (float)maxHealth >= 0f)
         {
             targetColor = slimeColors[3];
         }
 
         updateColor = true;
     }
+
+    //  implemented to satisfy IHealable
+    public void Heal(int _value)
+    {
+        //  if the healing value wont heal us past our max health
+        if ((CurrentHealth + _value) <= maxHealth) { CurrentHealth += _value; }
+        //  otherwise, it would put us over our maxHealth, assign currentHealth to maxhealth
+        else { CurrentHealth = maxHealth; }
+
+    }
+
 
     public void DeathCleanup()
     {

@@ -61,6 +61,15 @@ public class GameManager : MonoBehaviour
         var selectedSlimes = SlimePicker.instance.slimeList;
         _slime.alive = false;
 
+        // check that no slimes were following this gameobject
+        foreach (var slime in livingSlimes)
+        {
+            if (slime.Target == _slime.gameObject)
+            {
+                slime.SetDestination(_slime.transform.position);
+            }
+        }
+
         //  if the selected slimes list contains this now dead slime
         if (selectedSlimes.Contains(_slime))
         {
