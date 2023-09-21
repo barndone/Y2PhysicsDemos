@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class SlimeMotor : MonoBehaviour
@@ -14,7 +15,8 @@ public class SlimeMotor : MonoBehaviour
     [SerializeField] Transform destinationTarget;
     private Vector3 destinationPos;
 
-    public GameObject Target { get { return Target; } private set { Target = value; } }
+    private GameObject target;
+    public GameObject Target { get { return target; } private set { target = value; } }
     [SerializeField] Vector3 destinationDirection;
 
     [SerializeField] LayerMask groundLayer;

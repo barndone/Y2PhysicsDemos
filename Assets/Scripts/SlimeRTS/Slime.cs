@@ -9,18 +9,20 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
     //  starting mass of the slime
     [SerializeField] float startingMass = 10f;
 
+    private int curHealth = 0;
+    private float curMass = 0.0f;
+
     //  public get and private set field 
     public int CurrentHealth
     {
-        get { return CurrentHealth; }
-        private set { CurrentHealth = value; }
+        get { return curHealth; }
+        private set { curHealth = value; }
     }
-
 
     public float CurrentMass
     {
-        get { return CurrentMass; }
-        private set { CurrentMass = value; }
+        get { return curMass; }
+        private set { curMass = value; }
     }
     private SlimeMotor motor;
 
@@ -68,11 +70,14 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
 
     private void Update()
     {
+        //  timer
+        //  start time // duration
+
         if (updateColor)
         {
             if (currentColor != targetColor)
             {
-                currentColor = Color.Lerp(currentColor, targetColor, transitionSpeed * Time.deltaTime);
+                currentColor = Color.Lerp(currentColor, targetColor, transitionSpeed);
                 rend.material.color = currentColor;
             }
 
