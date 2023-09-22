@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 public class GameManager : MonoBehaviour
 {
     //  list containing all of the available (alive) slimes
-    [SerializeField] private List<SlimeMotor> livingSlimes = new();
+    public List<SlimeMotor> livingSlimes = new();
     //  list containing all the unavailable (dead) slimes
     [SerializeField] private List<SlimeMotor> deadSlimes = new();
 

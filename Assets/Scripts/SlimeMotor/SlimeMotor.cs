@@ -204,4 +204,9 @@ public class SlimeMotor : MonoBehaviour
             return destinationPos;
         }
     }
+
+    public Transform GetDestinationTransform()
+    {
+        return destinationTarget;
+    }
 }
