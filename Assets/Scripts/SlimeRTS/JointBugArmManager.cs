@@ -15,8 +15,8 @@ public class JointBugArmManager : MonoBehaviour
     //  list of joints in this arm
     [SerializeField] List<Rigidbody> joints = new List<Rigidbody>();
     //  the body part the armLift force will be applied to
-    [SerializeField] Rigidbody impulsePoint;
-
+    [SerializeField] Rigidbody lowerArm;
+    [SerializeField] Rigidbody upperArm;
     //  time the joint bug will wait before attacking
     [SerializeField] float attackWaitTime = 1.5f;
     //  internal timer for tracking the attack wait time
@@ -31,11 +31,27 @@ public class JointBugArmManager : MonoBehaviour
     private bool attacking = false;
     private bool attackWish = false;
 
-    [SerializeField] float armLiftForce = 10.0f;
+    [SerializeField] float lowerArmLift = 10.0f;
+    [SerializeField] float upperArmLift;
+    [SerializeField] float explosiveForce = 5.0f;
+    [SerializeField] float explosionRadius = 2.0f;
+    [SerializeField] float upwardExplosionForce = 4.0f;
+
+    [SerializeField] int damage = 1;
 
     [SerializeField] UnityEvent attackEvent;
 
     [SerializeField] LayerMask finishAttackLayers;
+
+    private void Awake()
+    {
+        Slime.removeFromList += RemoveDeadSlime;
+    }
+
+    private void OnDestroy()
+    {
+        Slime.removeFromList -= RemoveDeadSlime;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -76,7 +92,8 @@ public class JointBugArmManager : MonoBehaviour
             joint.isKinematic = false;
         }
 
-        impulsePoint.AddForce(Vector3.up * armLiftForce, ForceMode.Impulse);
+        upperArm.AddForce(upperArm.transform.forward * upperArmLift, ForceMode.Impulse);
+        lowerArm.AddForce(Vector3.up * lowerArmLift, ForceMode.Impulse);
     }
 
     public void ResolveAttackEnd()
@@ -87,13 +104,35 @@ public class JointBugArmManager : MonoBehaviour
         }
 
         attacking = false;
+
+        if (slimesInRange.Count >= slimesToStartAttack && !attacking) { attackWish = true; }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (attacking && finishAttackLayers.Contains(collision.gameObject.layer))
         {
+            foreach (var slimeMotor in slimesInRange)
+            {
+                if (slimeMotor.TryGetComponent<Slime> (out var slime))
+                {
+                    slime.TakeDamage(damage);
+                }
+                slimeMotor.rb.AddExplosionForce(explosiveForce, collision.GetContact(0).point, explosionRadius, upwardExplosionForce, ForceMode.Impulse);
+            }
+
             ResolveAttackEnd();
         }
+    }
+
+    public void RemoveDeadSlime(SlimeMotor _deadSlime)
+    {
+        slimesInRange.Remove(_deadSlime);
+    }
+
+    public void ArmDeath()
+    {
+        //  TODO implement event that passes this script to clean up reference in JointBugController.cs
+        Destroy(this);
     }
 }

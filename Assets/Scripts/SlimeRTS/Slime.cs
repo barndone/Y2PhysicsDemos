@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Slime : MonoBehaviour, IDamageable, IHealable
 {
@@ -36,6 +38,8 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
 
     [SerializeField] MeshRenderer rend;
     [SerializeField] Animator animator;
+
+    public static event Action<SlimeMotor> removeFromList;
 
     private void Awake()
     {
@@ -127,12 +131,12 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
         if ((CurrentHealth + _value) <= maxHealth) { CurrentHealth += _value; }
         //  otherwise, it would put us over our maxHealth, assign currentHealth to maxhealth
         else { CurrentHealth = maxHealth; }
-
     }
 
 
     public void DeathCleanup()
     {
+        removeFromList.Invoke(motor);
         Destroy(gameObject);
     }
 }

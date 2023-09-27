@@ -281,8 +281,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 5
   startingMass: 10
-  currentHealth: 0
-  currentMass: 0
   slimeColors:
   - {r: 0.27058825, g: 0.7647059, b: 0.3372549, a: 0.87058824}
   - {r: 0.62056786, g: 0.7647059, b: 0.27058828, a: 0.87058824}
@@ -293,6 +291,21 @@ MonoBehaviour:
   transitionSpeed: 0.5
   rend: {fileID: 0}
   animator: {fileID: 0}
+  removeFromList:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11500000, guid: 0e934fdfa086df841b995a8d7f524f7b, type: 3}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!95 &576849718586049930
 Animator:
   serializedVersion: 4
