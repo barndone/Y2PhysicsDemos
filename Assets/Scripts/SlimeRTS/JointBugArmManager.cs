@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,6 +29,7 @@ public class JointBugArmManager : MonoBehaviour
     //  internal tracker for how many slimes are in the trigger volume
     private List<SlimeMotor> slimesInRange= new List<SlimeMotor>();
 
+    [SerializeField] bool active = false;
     private bool attacking = false;
     private bool attackWish = false;
 
@@ -38,10 +40,28 @@ public class JointBugArmManager : MonoBehaviour
     [SerializeField] float upwardExplosionForce = 4.0f;
 
     [SerializeField] int damage = 1;
-
-    [SerializeField] UnityEvent attackEvent;
-
     [SerializeField] LayerMask finishAttackLayers;
+
+    public static event Action<JointBugArmManager> partBroken;
+
+    [SerializeField] LayerMask slimeLayer;
+ 
+    public void ActivateLimb()
+    {
+        active = true;
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, 3f, slimeLayer);
+        
+        if (hits.Length >= 1)
+        {
+            foreach (Collider hitSlime in hits)
+            {
+                hitSlime.TryGetComponent<SlimeMotor>(out var slime);    
+                slimesInRange.Add(slime);
+            }
+            attackWish = true;
+        }
+    }
 
     private void Awake()
     {
@@ -55,7 +75,7 @@ public class JointBugArmManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<SlimeMotor>(out var slime))
+        if (active && other.TryGetComponent<SlimeMotor>(out var slime))
         { 
                 slimesInRange.Add(slime);
                 if (slimesInRange.Count >= slimesToStartAttack && !attacking) { attackWish = true; }
@@ -64,7 +84,7 @@ public class JointBugArmManager : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent<SlimeMotor>(out var slime))
+        if (active && other.TryGetComponent<SlimeMotor>(out var slime))
         {
             slimesInRange.Remove(slime);
         }
@@ -93,7 +113,10 @@ public class JointBugArmManager : MonoBehaviour
         }
 
         upperArm.AddForce(upperArm.transform.forward * upperArmLift, ForceMode.Impulse);
-        lowerArm.AddForce(Vector3.up * lowerArmLift, ForceMode.Impulse);
+        if (lowerArm != null)
+        {
+            lowerArm.AddForce(Vector3.up * lowerArmLift, ForceMode.Impulse);
+        }
     }
 
     public void ResolveAttackEnd()
@@ -132,7 +155,7 @@ public class JointBugArmManager : MonoBehaviour
 
     public void ArmDeath()
     {
-        //  TODO implement event that passes this script to clean up reference in JointBugController.cs
+        partBroken.Invoke(this);
         Destroy(this);
     }
 }

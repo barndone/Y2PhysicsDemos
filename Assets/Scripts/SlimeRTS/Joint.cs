@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,11 @@ public class Joint : MonoBehaviour, IDamageable
 {
     [SerializeField] int maxHealth = 5;
 
+    private Rigidbody rb;
+
     [SerializeField] UnityEvent jointBreakEvent;
+
+    public static event Action<Rigidbody> cleanUpReferences;
 
     private int currentHealth;
     public int CurrentHealth
@@ -18,6 +23,7 @@ public class Joint : MonoBehaviour, IDamageable
     private void OnEnable()
     {
         CurrentHealth = maxHealth;
+        TryGetComponent<Rigidbody>(out rb);
     }
 
     public void TakeDamage(int _damage)
@@ -27,6 +33,7 @@ public class Joint : MonoBehaviour, IDamageable
         if (CurrentHealth < 0)
         {
             jointBreakEvent.Invoke();
+            cleanUpReferences.Invoke(rb);
             Destroy(gameObject);
         }
     }

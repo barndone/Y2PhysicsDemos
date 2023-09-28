@@ -123,7 +123,7 @@ public class SlimePicker : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(mousePos);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer, QueryTriggerInteraction.Ignore))
             {
                 var transform = hit.point;
                 transform.y += multiSelectionVisualizer.transform.localScale.y / 2f;
@@ -143,7 +143,7 @@ public class SlimePicker : MonoBehaviour
             Ray ray = cam.ScreenPointToRay(mousePos);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, slimeLayer))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, slimeLayer, QueryTriggerInteraction.Ignore))
             {
                 Debug.Log("Hit " + hit.transform.gameObject.name, hit.transform.gameObject);
             
@@ -175,7 +175,7 @@ public class SlimePicker : MonoBehaviour
                     Ray losCheck = new(hit.point, dir);
                     RaycastHit slimeHitCheck;
 
-                    if (Physics.Raycast(losCheck, out slimeHitCheck, Mathf.Infinity))
+                    if (Physics.Raycast(losCheck, out slimeHitCheck, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
                     {
 
                         if (1 << slimeHitCheck.collider.gameObject.layer == slimeLayer)
@@ -208,7 +208,7 @@ public class SlimePicker : MonoBehaviour
                 Ray ray = cam.ScreenPointToRay(mousePos);
                 RaycastHit hit;
 
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
                 {
 
                     if (CheckForRigidbodyFromHit(hit))
