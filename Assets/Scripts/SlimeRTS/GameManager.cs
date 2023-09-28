@@ -113,7 +113,14 @@ public class GameManager : MonoBehaviour
         //  winner_winner_chicken_dinner.wav
         else
         {
-
+            
         }
+
+        //  TODO: implement end screen UI
+    }
+
+    public void JointBugHeadShot()
+    {
+        gameOver = true;
     }
 }

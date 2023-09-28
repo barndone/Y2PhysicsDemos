@@ -121,9 +121,12 @@ public class JointBugArmManager : MonoBehaviour
 
     public void ResolveAttackEnd()
     {
-        foreach (var joint in joints)
+        if (lowerArm != null)
         {
-            joint.isKinematic = true;
+            foreach (var joint in joints)
+            {
+                joint.isKinematic = true;
+            }
         }
 
         attacking = false;
