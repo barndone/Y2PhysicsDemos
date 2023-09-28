@@ -24006,7 +24006,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh25096
+  m_Name: pb_Mesh25060
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -24994,7 +24994,7 @@ GameObject:
   - component: {fileID: 1452800833}
   - component: {fileID: 1452800832}
   m_Layer: 5
-  m_Name: Image
+  m_Name: reticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26377,7 +26377,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh25160
+  m_Name: pb_Mesh25148
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -27418,6 +27418,22 @@ PrefabInstance:
     - target: {fileID: 6284066574687061819, guid: 4b7c73aafa0f16140aba9c0b5782654d, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6284066575081864322, guid: 4b7c73aafa0f16140aba9c0b5782654d, type: 3}
+      propertyPath: m_ClearFlags
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6284066575081864322, guid: 4b7c73aafa0f16140aba9c0b5782654d, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.5943396
+      objectReference: {fileID: 0}
+    - target: {fileID: 6284066575081864322, guid: 4b7c73aafa0f16140aba9c0b5782654d, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.26711014
+      objectReference: {fileID: 0}
+    - target: {fileID: 6284066575081864322, guid: 4b7c73aafa0f16140aba9c0b5782654d, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.058873262
       objectReference: {fileID: 0}
     - target: {fileID: 6284066575081864324, guid: 4b7c73aafa0f16140aba9c0b5782654d, type: 3}
       propertyPath: m_Layer
