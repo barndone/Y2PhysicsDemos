@@ -44,6 +44,8 @@ public class SlimePicker : MonoBehaviour
 
     public static SlimePicker instance;
 
+    private AudioSource feedbackSource;
+
     void Awake()
     {
         if (!instance)
@@ -59,6 +61,12 @@ public class SlimePicker : MonoBehaviour
         cam = GetComponent<Camera>();
         defaultVisualizerScaler = multiSelectionVisualizer.transform.localScale;
         visualizerYOffset = multiSelectionVisualizer.transform.position.y;
+        if (TryGetComponent<AudioSource>(out feedbackSource))
+        {
+            //  do nothing
+        }
+
+        else { Debug.LogError("No AudioSource component attached to " + this.name, this); }
     }
 
     private void Update()
@@ -140,8 +148,12 @@ public class SlimePicker : MonoBehaviour
             {
                 if (!additiveSelectWish)
                 {
-                    slimeList.Clear();
-                    Debug.Log("Shift not held while selecting, list cleared");
+                    if (slimeList.Count > 0)
+                    {
+                        slimeList.Clear();
+                        feedbackSource.PlayOneShot(AudioManager.instance.GetClearSelectionSound());
+                    }
+
                 }
 
                 heldLastFrame = true;
@@ -228,6 +240,8 @@ public class SlimePicker : MonoBehaviour
                     }
                 }
 
+                feedbackSource.PlayOneShot(AudioManager.instance.GetCommandSound());
+
                 commandWish = false;
             }
         }
@@ -241,6 +255,7 @@ public class SlimePicker : MonoBehaviour
         {
             //  if this slime isn't we add it!
             slimeList.Add(slime);
+            feedbackSource.PlayOneShot(AudioManager.instance.GetSelectionSound());
         }
     }
 

@@ -8,6 +8,11 @@ public class AudioManager : MonoBehaviour
     [SerializeField] List<AudioClip> impactSounds = new List<AudioClip>();
     [SerializeField] List<AudioClip> slimeImpactSounds = new List<AudioClip>();
 
+    [SerializeField] AudioClip selectSound;
+    [SerializeField] AudioClip commandSound;
+    [SerializeField] AudioClip clearSelectionSound;
+    [SerializeField] AudioClip healTickSound;
+
     [SerializeField] AudioSource musicSource;
 
     public static AudioManager instance;
@@ -39,5 +44,25 @@ public class AudioManager : MonoBehaviour
     public AudioClip GetSlimeImpactSound()
     {
         return slimeImpactSounds[Random.Range(0, slimeImpactSounds.Count)];
+    }
+
+    public AudioClip GetSelectionSound()
+    {
+        return selectSound;
+    }
+
+    public AudioClip GetCommandSound()
+    {
+        return commandSound;
+    }
+
+    public AudioClip GetClearSelectionSound()
+    {
+        return clearSelectionSound;
+    }
+
+    public AudioClip GetHealingTickSound()
+    {
+        return healTickSound;
     }
 }

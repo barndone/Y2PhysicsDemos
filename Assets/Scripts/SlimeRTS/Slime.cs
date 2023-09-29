@@ -120,14 +120,18 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
     }
 
     //  implemented to satisfy IHealable
-    public void Heal(int _value)
+    public bool Heal(int _value)
     {
         //  if the healing value wont heal us past our max health
-        if ((CurrentHealth + _value) <= maxHealth) { CurrentHealth += _value; }
+        if ((CurrentHealth + _value) <= maxHealth) 
+        { 
+            CurrentHealth += _value;
+            UpdateColor(); 
+            return true; 
+        }
         //  otherwise, it would put us over our maxHealth, assign currentHealth to maxhealth
-        else { CurrentHealth = maxHealth; }
+        else { CurrentHealth = maxHealth; return false;  }
 
-        UpdateColor();
     }
 
     public void UpdateColor()

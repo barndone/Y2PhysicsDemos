@@ -4,5 +4,5 @@ using UnityEngine;
 
 interface IHealable
 {
-    void Heal(int _value);
+    bool Heal(int _value);
 }

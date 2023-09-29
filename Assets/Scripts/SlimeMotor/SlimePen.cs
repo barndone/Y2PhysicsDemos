@@ -1,6 +1,7 @@
 using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.iOS;
 using UnityEngine;
 
 public class SlimePen : MonoBehaviour
@@ -13,7 +14,7 @@ public class SlimePen : MonoBehaviour
 
     [SerializeField] int healthPerTick = 1;
 
-
+    private AudioSource source;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -38,6 +39,16 @@ public class SlimePen : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        if (TryGetComponent<AudioSource>(out source))
+        {
+            //  do nothing
+        }
+
+        else { Debug.LogError("No AudioSource component attached to " + this.name, this); }
+    }
+
     private void Update()
     {
         if (containedSlimes.Count > 0)
@@ -51,9 +62,25 @@ public class SlimePen : MonoBehaviour
                 //  TODO Visual Indicator for healing
                 timer = 0.0f;
 
+                bool healed = false;
+
                 foreach (var go in containedSlimes)
                 {
-                    if (go.TryGetComponent<Slime>(out var slime)) { slime.Heal(healthPerTick); }
+                    if (go.TryGetComponent<Slime>(out var slime)) 
+                    
+                    {
+                        var healedSlime = slime.Heal(healthPerTick);
+                        
+                        if (healedSlime && !healed)
+                        {
+                            healed = true;
+                        }
+                    }
+                }
+
+                if (healed)
+                {
+                    source.PlayOneShot(AudioManager.instance.GetHealingTickSound());
                 }
             }
         }
