@@ -186,12 +186,6 @@ public class SlimePicker : MonoBehaviour
                             if (1 << slimeHitCheck.collider.gameObject.layer == slimeLayer)
                             {
                                 slimeRB.AddExplosionForce(explosionForce, hit.point, explosionRadius, explosionVerticalImpulse, ForceMode.Impulse);
-
-                                if (slimeRB.gameObject.TryGetComponent<Slime>(out var hitSlime))
-                                {
-                                    hitSlime.TakeDamage(1);
-                                }
-
                                 Debug.Log("Explosion applied to: " + slimeRB.gameObject.name, slimeRB.gameObject);
                             }
                             else

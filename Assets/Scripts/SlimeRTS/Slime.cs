@@ -14,12 +14,16 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
     private int curHealth = 0;
     private float curMass = 0.0f;
 
+    public string unitName;
+
     //  public get and private set field 
     public int CurrentHealth
     {
         get { return curHealth; }
         private set { curHealth = value; }
     }
+
+    public int MaxHealth { get { return maxHealth; } }
 
     public float CurrentMass
     {
@@ -40,6 +44,9 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
     [SerializeField] Animator animator;
 
     public static event Action<SlimeMotor> removeFromList;
+    public static event Action<Slime> onMouseOverEvent;
+    public static event Action<bool> onMouseExitEvent;
+
 
     Color startColor;
     float timer = 0;
@@ -152,5 +159,15 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
     {
         removeFromList.Invoke(motor);
         Destroy(gameObject);
+    }
+
+    public void OnMouseEnter()
+    {
+        onMouseOverEvent.Invoke(this);
+    }
+
+    public void OnMouseExit()
+    {
+        onMouseExitEvent.Invoke(true);
     }
 }

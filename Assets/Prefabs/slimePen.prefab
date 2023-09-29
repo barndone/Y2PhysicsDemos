@@ -159,10 +159,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7a8efb981ebb2d4394235959d21658e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slimeCap: 1
   slimeMask:
     serializedVersion: 2
     m_Bits: 8
+  timeBetweenTicks: 1
+  healthPerTick: 1
 --- !u!1 &4561622179478372105
 GameObject:
   m_ObjectHideFlags: 0

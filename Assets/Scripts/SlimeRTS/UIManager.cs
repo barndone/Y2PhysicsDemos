@@ -93,6 +93,7 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         HideTutorials();
+
         GameManager.panelFadeEvent += FadeInEndScreen;
     }
 
@@ -111,7 +112,9 @@ public class UIManager : MonoBehaviour
             tutorialText.text = tutorialPrompts[0];
 
             movementTutorialShown = true;
+            objectiveIndicator.text = objectivePrompts[0];
         }
+
 
     }
 
@@ -139,6 +142,7 @@ public class UIManager : MonoBehaviour
             tutorialText.text = tutorialPrompts[2];
 
             healingTutorialShown = true;
+            objectiveIndicator.text = objectivePrompts[1];
         }
     }
 

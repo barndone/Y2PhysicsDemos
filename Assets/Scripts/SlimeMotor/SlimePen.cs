@@ -20,6 +20,11 @@ public class SlimePen : MonoBehaviour
         if (1 << other.gameObject.layer == slimeMask)
         {
             containedSlimes.Add(other.gameObject);
+
+            if (other.TryGetComponent<SlimeMotor>(out var slime))
+            {
+                slime.SetDestination(slime.transform);
+            }
             Debug.Log(other.gameObject.name + " has entered the pen!", other.gameObject);
         }
     }

@@ -122,7 +122,7 @@ MonoBehaviour:
   maxJumpDelay: 1.5
   rb: {fileID: 0}
   UseTransformTargeting: 1
-  destinationTarget: {fileID: 0}
+  destinationTarget: {fileID: 3146749240762746983}
   destinationDirection: {x: 0, y: 0, z: 0}
   groundLayer:
     serializedVersion: 2

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UIElements;
 
 public class Joint : MonoBehaviour, IDamageable
 {
@@ -13,13 +14,17 @@ public class Joint : MonoBehaviour, IDamageable
     [SerializeField] UnityEvent jointBreakEvent;
 
     public static event Action<Rigidbody> cleanUpReferences;
+    public static event Action<Joint> onMouseOverEvent;
+    public static event Action<bool> onMouseExitEvent;
+
+    public string unitName;
 
     private int currentHealth;
     public int CurrentHealth
     {
         get { return currentHealth; } private set { currentHealth = value; }
     }
-
+    public int MaxHealth { get { return maxHealth; } }
     private void OnEnable()
     {
         CurrentHealth = maxHealth;
@@ -72,5 +77,14 @@ public class Joint : MonoBehaviour, IDamageable
     {
         //  divide the absolute value of the force magnitude by 10, cast to int
         return (int)Mathf.Abs(_force.magnitude) / 10;
+    }
+    public void OnMouseEnter()
+    {
+        onMouseOverEvent.Invoke(this);
+    }
+
+    public void OnMouseExit()
+    {
+        onMouseExitEvent.Invoke(true);
     }
 }
