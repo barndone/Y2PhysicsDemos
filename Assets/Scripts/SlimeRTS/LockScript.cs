@@ -8,6 +8,8 @@ public class LockScript : MonoBehaviour
     [SerializeField] HingeJoint leftDoor;
     [SerializeField] HingeJoint rightDoor;
 
+    [SerializeField] GameObject additionalLocks;
+
     [SerializeField] List<SlimeMotor> slimesInRange = new List<SlimeMotor>();
 
     [SerializeField] float explosiveForce = 5.0f;
@@ -43,6 +45,20 @@ public class LockScript : MonoBehaviour
             }
             slimeMotor.rb.AddExplosionForce(explosiveForce, transform.position, explosionRadius, upwardExplosionForce, ForceMode.Impulse);
         }
+        
+        if (additionalLocks != null)
+        {
+            //  iterate through all the living slimes, if the target is equal to this transform--
+            foreach (var slimes in GameManager.instance.livingSlimes)
+            {
+                if (slimes.GetDestinationTransform() == additionalLocks.transform)
+                {
+                    //  set the destination to this transform's position to avoid null reference
+                    slimes.SetDestination(additionalLocks.transform.position);
+                }
+            }
+            Destroy(additionalLocks);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -51,7 +67,6 @@ public class LockScript : MonoBehaviour
         {
             slimesInRange.Add(slime);
         }
-
     }
 
     private void OnTriggerExit(Collider other)

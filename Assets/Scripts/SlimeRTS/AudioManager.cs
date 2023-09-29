@@ -15,6 +15,13 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] AudioSource musicSource;
 
+    [SerializeField] AudioClip lowHealthSound;
+    [SerializeField] List<AudioClip> slimeDeathSounds = new List<AudioClip>();
+    [SerializeField] AudioClip jointBreakSound;
+
+    [SerializeField] AudioClip winSound;
+    [SerializeField] AudioClip loseSound;
+
     public static AudioManager instance;
 
     private void Awake()
@@ -64,5 +71,26 @@ public class AudioManager : MonoBehaviour
     public AudioClip GetHealingTickSound()
     {
         return healTickSound;
+    }
+
+    public AudioClip GetLowHealthWarning()
+    {
+        return lowHealthSound;
+    }
+
+    public AudioClip GetSlimeDeathSound()
+    {
+        return slimeDeathSounds[Random.Range(0, slimeDeathSounds.Count)];
+    }
+
+    public AudioClip GetJointBreakSound()
+    {
+        return jointBreakSound;
+    }
+
+    public AudioClip GetVictoryStateSound(bool victory)
+    {
+        if (victory) { return winSound; }
+        else { return loseSound; }
     }
 }

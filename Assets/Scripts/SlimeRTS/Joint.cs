@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UIElements;
+using static Unity.VisualScripting.Member;
 
 public class Joint : MonoBehaviour, IDamageable
 {
@@ -25,10 +26,19 @@ public class Joint : MonoBehaviour, IDamageable
         get { return currentHealth; } private set { currentHealth = value; }
     }
     public int MaxHealth { get { return maxHealth; } }
+
+    private AudioSource source;
     private void OnEnable()
     {
         CurrentHealth = maxHealth;
         TryGetComponent<Rigidbody>(out rb);
+
+        if (TryGetComponent<AudioSource>(out source))
+        {
+            //  do nothing
+        }
+
+        else { Debug.LogError("No AudioSource component attached to " + this.name, this); }
     }
 
     public void TakeDamage(int _damage)
@@ -40,6 +50,7 @@ public class Joint : MonoBehaviour, IDamageable
             healthBarDeathCleanupEvent.Invoke(unitName);
             jointBreakEvent.Invoke();
             cleanUpReferences.Invoke(rb);
+            source.PlayOneShot(AudioManager.instance.GetJointBreakSound());
             Destroy(gameObject);
         }
     }

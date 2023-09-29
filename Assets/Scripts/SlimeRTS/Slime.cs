@@ -108,11 +108,17 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
     {
         CurrentHealth -= _damage;
 
+        if (0.0f < (float)CurrentHealth / MaxHealth && (float)CurrentHealth / MaxHealth < 0.2f )
+        {
+            motor.slimeSource.PlayOneShot(AudioManager.instance.GetLowHealthWarning());
+        }
+
         if (CurrentHealth <= 0)
         {
             healthBarDeathCleanupEvent.Invoke(unitName);
             GameManager.instance.AddDeadSlime(motor);
             animator.enabled = true;
+            motor.slimeSource.PlayOneShot(AudioManager.instance.GetSlimeDeathSound());
             animator.SetTrigger("death");
         }
 

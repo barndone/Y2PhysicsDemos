@@ -20,6 +20,9 @@ public class TargetHealth : MonoBehaviour
 
     [SerializeField] GameObject healthBarParent;
 
+    [SerializeField] GameObject enemyIcon;
+    [SerializeField] GameObject slimeIcon;
+
     private void Awake()
     {
         Slime.onMouseOverEvent += SetTarget;
@@ -46,6 +49,11 @@ public class TargetHealth : MonoBehaviour
         {
             FillHealthBar();
         }
+
+        if (GameManager.instance.gameOver)
+        {
+            ClearTarget(currentTargetName);
+        }
     }
 
     public void FillHealthBar()
@@ -69,7 +77,9 @@ public class TargetHealth : MonoBehaviour
         hasTarget = true;
         targetName.gameObject.SetActive(true);
         currentTargetName = _slime.unitName;
-        targetName.text = _slime.unitName + " the Slime";
+        targetName.text = _slime.unitName;
+        slimeIcon.SetActive(true);
+        enemyIcon.SetActive(false);
     }
 
     public void SetTarget(Joint _joint)
@@ -82,6 +92,8 @@ public class TargetHealth : MonoBehaviour
         targetName.gameObject.SetActive(true);
         currentTargetName = _joint.unitName;
         targetName.text = _joint.unitName;
+        slimeIcon.SetActive(false);
+        enemyIcon.SetActive(true);
     }
 
     public void ClearTarget(string _name)

@@ -116,11 +116,11 @@ public class JointBugArmManager : MonoBehaviour
 
     public void BeginArmSlam()
     {
-        foreach (var joint in joints)
-        {
-            joint.isKinematic = false;
-        }
-
+       //    foreach (var joint in joints)
+       //    {
+       //        joint.isKinematic = false;
+       //    }
+       //   
         upperArm.AddForce(upperArm.transform.forward * upperArmLift, ForceMode.Impulse);
         if (lowerArm != null)
         {
@@ -134,10 +134,10 @@ public class JointBugArmManager : MonoBehaviour
     {
         if (lowerArm != null)
         {
-            foreach (var joint in joints)
-            {
-                joint.isKinematic = true;
-            }
+            //  foreach (var joint in joints)
+            //  {
+            //      joint.isKinematic = true;
+            //  }
         }
 
         attacking = false;

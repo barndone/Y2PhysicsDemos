@@ -4,6 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Slime.unity
+    guid: 2256fcef4c466b4448137343bfc05e17
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: c33dec91697e0294cadd1a3e54df19de, type: 2}

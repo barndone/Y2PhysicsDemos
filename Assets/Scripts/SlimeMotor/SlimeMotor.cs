@@ -42,7 +42,7 @@ public class SlimeMotor : MonoBehaviour
 
     public bool alive = true;
 
-    private AudioSource slimeSource;
+    public AudioSource slimeSource;
 
 
     private void Awake()
@@ -147,14 +147,6 @@ public class SlimeMotor : MonoBehaviour
         }
 
         slimeSource.PlayOneShot(AudioManager.instance.GetSlimeImpactSound());
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        if (1 << collision.gameObject.layer == groundLayer)
-        {
-            grounded = false;
-        }
     }
 
     public void ApplyHappiness(int value)

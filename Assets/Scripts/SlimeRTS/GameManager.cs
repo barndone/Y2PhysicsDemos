@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
@@ -121,20 +122,22 @@ public class GameManager : MonoBehaviour
             animator.enabled = false;
         }
 
-        //  otherwise, we have at LEAST 1 slime and all the joints are defeated
-        //  winner_winner_chicken_dinner.wav
-        else
-        {
-            
-        }
-
         Cursor.lockState = CursorLockMode.Confined;
-        //  TODO: implement end screen UI
         panelFadeEvent.Invoke(condition);
 
     }
     public void JointBugHeadShot()
     {
         gameOver = true;
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    public void RestartLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

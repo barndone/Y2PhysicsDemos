@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem.HID;
 
 public class SlimePicker : MonoBehaviour
@@ -45,6 +46,8 @@ public class SlimePicker : MonoBehaviour
     public static SlimePicker instance;
 
     private AudioSource feedbackSource;
+
+    public UnityEvent hitMarker;
 
     void Awake()
     {
@@ -237,10 +240,13 @@ public class SlimePicker : MonoBehaviour
                                 slime.SetDestination(hit.point);
                             }
                         }
-                    }
+                    }  
+                    feedbackSource.PlayOneShot(AudioManager.instance.GetCommandSound());
+                    hitMarker.Invoke();
+
                 }
 
-                feedbackSource.PlayOneShot(AudioManager.instance.GetCommandSound());
+
 
                 commandWish = false;
             }

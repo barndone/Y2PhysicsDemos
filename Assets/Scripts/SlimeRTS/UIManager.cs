@@ -4,7 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.UIElements.Experimental;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
+using Unity.VisualScripting;
 
 public class UIManager : MonoBehaviour
 {
@@ -55,6 +55,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI endScrnTotalSlimesText;
     [SerializeField] TextMeshProUGUI endScrnAdviceText;
 
+    [SerializeField] Image hitMarker;
+    private bool hitmarkerFade = false;
+    private float hitmarkerCounter = 0.0f;
+    private float hitmarkerFadeTime = 0.5f;
+
+    private AudioSource source;
+
     public void UpdateUI()
     {
         selectedSlimesIndicator.text = "Selected Slimes: " + SlimePicker.instance.SelectedSlimes;
@@ -84,6 +91,22 @@ public class UIManager : MonoBehaviour
             }
         }
 
+        if (hitmarkerFade)
+        {
+            if (hitmarkerCounter < hitmarkerFadeTime)
+            {
+                hitmarkerCounter += Time.deltaTime;
+                var c = Color.Lerp(startColor, destColor, hitmarkerCounter / hitmarkerFadeTime);
+                hitMarker.color = c;
+            }
+
+            else
+            {
+                hitmarkerCounter = 0.0f;
+                hitmarkerFade = false;
+            }
+        }
+
         if (doneFading)
         {
             InitEndScreen();
@@ -95,6 +118,13 @@ public class UIManager : MonoBehaviour
         HideTutorials();
 
         GameManager.panelFadeEvent += FadeInEndScreen;
+
+        if (TryGetComponent<AudioSource>(out source))
+        {
+            //  do nothing
+        }
+
+        else { Debug.LogError("No AudioSource component attached to " + this.name, this); }
     }
 
     private void OnDestroy()
@@ -151,17 +181,20 @@ public class UIManager : MonoBehaviour
         tutorialObj.SetActive(false);
     }
 
-    //  show the objective
-    public void ObjectiveIndicator()
-    {
-        //  TODO: implement
-    }
-
     public void FadeInEndScreen(bool condition)
     {
         fadeEndPanelIn = true;
         fail = condition;
         startColor = endPanelImage.color;
+    }
+
+    public void HitMarker()
+    {
+        destColor = new Color(hitMarker.color.r, hitMarker.color.g, hitMarker.color.b, 0.0f);
+        var c = new Color(hitMarker.color.r, hitMarker.color.g, hitMarker.color.b, 1.0f);
+        hitMarker.color = c;
+        startColor = hitMarker.color;
+        hitmarkerFade = true;
     }
 
     public void InitEndScreen()
@@ -176,6 +209,7 @@ public class UIManager : MonoBehaviour
             go.SetActive(true);
         }
         _ = fail ? (resultsText.text = defeatText) : (resultsText.text = victoryText);
+        source.PlayOneShot(AudioManager.instance.GetVictoryStateSound(!fail));
 
         rankText.text = CalculateRank();
 
