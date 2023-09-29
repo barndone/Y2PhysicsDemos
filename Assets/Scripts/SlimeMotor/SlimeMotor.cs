@@ -8,6 +8,9 @@ public class SlimeMotor : MonoBehaviour
     [SerializeField] float jumpDelay = 1.5f;
     private float jumpTimer = 0.0f;
 
+    [SerializeField] float minJumpDelay = 0.5f;
+    [SerializeField] float maxJumpDelay = 1.5f;
+
     public Rigidbody rb;
 
 
@@ -36,6 +39,8 @@ public class SlimeMotor : MonoBehaviour
     [SerializeField] int trajectoryVisSteps = 15;
 
     public bool alive = true;
+
+
     private void Awake()
     {
         if (TryGetComponent<Rigidbody>(out rb))
@@ -94,6 +99,8 @@ public class SlimeMotor : MonoBehaviour
         {
             destinationDirection = (GetDestinationPosition(UseTransformTargeting) - rb.position).normalized;
             jumpTimer = 0.0f;
+
+            jumpDelay = Random.Range(minJumpDelay, maxJumpDelay);
 
             var force = new Vector3(destinationDirection.x * horizontalStrength, verticalStrength, destinationDirection.z * horizontalStrength);
 

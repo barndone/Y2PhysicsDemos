@@ -63,173 +63,179 @@ public class SlimePicker : MonoBehaviour
 
     private void Update()
     {
-        mousePos = Input.mousePosition;
-
-        if (Input.GetMouseButtonDown(0))
+        if (!GameManager.instance.gameOver)
         {
+            mousePos = Input.mousePosition;
 
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetMouseButtonDown(0))
             {
-                additiveSelectWish = true;
+
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    additiveSelectWish = true;
+                }
+                else
+                {
+                    additiveSelectWish = false;
+                }
+
+                selectWish = true;
             }
-            else
+
+            if (heldLastFrame && Input.GetMouseButton(0))
             {
-                additiveSelectWish = false;
+                multiSelectWish = true;
+                heldLastFrame = false;
             }
 
-            selectWish = true;
-        }
+            if (Input.GetMouseButtonUp(0) && multiSelectWish)
+            {
+                multiSelectWish = false;
+                multiSelectionVisualizer.transform.localScale = defaultVisualizerScaler;
+                multiSelectionVisualizer.SetActive(false);
+            }
 
-        if (heldLastFrame && Input.GetMouseButton(0))
-        {
-            multiSelectWish = true;
-            heldLastFrame = false;
-        }
+            if (Input.GetMouseButtonDown(1))
+            {
+                commandWish = true;
+            }
 
-        if (Input.GetMouseButtonUp(0) && multiSelectWish)
-        {
-            multiSelectWish = false;
-            multiSelectionVisualizer.transform.localScale = defaultVisualizerScaler;
-            multiSelectionVisualizer.SetActive(false);
-        }
-
-        if (Input.GetMouseButtonDown(1))
-        {
-            commandWish = true;
-        }
-
-        if (Input.GetMouseButtonDown(2))
-        {
-            explosionWish = true;
+            if (Input.GetMouseButtonDown(2))
+            {
+                explosionWish = true;
+            }
         }
     }
 
     void FixedUpdate()
     {
-        if (multiSelectWish)
+        if (!GameManager.instance.gameOver)
         {
-            if (!multiSelectionVisualizer.activeSelf)
+            if (multiSelectWish)
             {
-                multiSelectionVisualizer.SetActive(true);
-            }
-            if (multiSelectionVisualizer.transform.lossyScale.x <= maxVisualizerRadius)
-            {
-                var scale = multiSelectionVisualizer.transform.lossyScale;
-                scale.x = scale.z += (multiSelectGrowthRate * Time.deltaTime);
-
-                multiSelectionVisualizer.transform.localScale = scale;
-            }
-
-            Ray ray = cam.ScreenPointToRay(mousePos);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer, QueryTriggerInteraction.Ignore))
-            {
-                var transform = hit.point;
-                transform.y += multiSelectionVisualizer.transform.localScale.y / 2f;
-                multiSelectionVisualizer.transform.position = transform;
-            }
-        }
-
-        else if (selectWish)
-        {
-            if (!additiveSelectWish)
-            {
-                slimeList.Clear();
-                Debug.Log("Shift not held while selecting, list cleared");
-            }
-
-            heldLastFrame = true;
-            Ray ray = cam.ScreenPointToRay(mousePos);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, slimeLayer, QueryTriggerInteraction.Ignore))
-            {
-                Debug.Log("Hit " + hit.transform.gameObject.name, hit.transform.gameObject);
-            
-                var hitSlime = hit.transform.gameObject.GetComponent<SlimeMotor>();
-
-                AddOverlappingSlimeMotor(hitSlime);
-
-            }
-            selectWish = false;
-        }
-
-        if (explosionWish)
-        {
-            Ray ray = cam.ScreenPointToRay(mousePos);
-            RaycastHit hit;
-
-            int overlaps = 0;
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-            {
-                overlaps = Physics.OverlapSphereNonAlloc(hit.point, explosionRadius, slimesInExplosionRange, slimeLayer);
-
-                for (int i = 0; i < overlaps; i++)
+                if (!multiSelectionVisualizer.activeSelf)
                 {
-                    var slimeRB = slimesInExplosionRange[i].gameObject.GetComponent<SlimeMotor>().rb;
+                    multiSelectionVisualizer.SetActive(true);
+                }
+                if (multiSelectionVisualizer.transform.lossyScale.x <= maxVisualizerRadius)
+                {
+                    var scale = multiSelectionVisualizer.transform.lossyScale;
+                    scale.x = scale.z += (multiSelectGrowthRate * Time.deltaTime);
 
-                    var dir = slimeRB.position - hit.point;
+                    multiSelectionVisualizer.transform.localScale = scale;
+                }
 
-                    Ray losCheck = new(hit.point, dir);
-                    RaycastHit slimeHitCheck;
+                Ray ray = cam.ScreenPointToRay(mousePos);
+                RaycastHit hit;
 
-                    if (Physics.Raycast(losCheck, out slimeHitCheck, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
-                    {
-
-                        if (1 << slimeHitCheck.collider.gameObject.layer == slimeLayer)
-                        {
-                            slimeRB.AddExplosionForce(explosionForce, hit.point, explosionRadius, explosionVerticalImpulse, ForceMode.Impulse);
-
-                            if (slimeRB.gameObject.TryGetComponent<Slime>(out var hitSlime))
-                            {
-                                hitSlime.TakeDamage(1);
-                            }
-
-                            Debug.Log("Explosion applied to: " + slimeRB.gameObject.name, slimeRB.gameObject);
-                        }
-                        else
-                        {
-                            Debug.Log("Explosion could not reach " + slimeRB.gameObject.name, slimeRB.gameObject);
-                        }
-                    }
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer, QueryTriggerInteraction.Ignore))
+                {
+                    var transform = hit.point;
+                    transform.y += multiSelectionVisualizer.transform.localScale.y / 2f;
+                    multiSelectionVisualizer.transform.position = transform;
                 }
             }
 
-            //Debug.Log(overlaps);
-            explosionWish = false;
-        }
+            else if (selectWish)
+            {
+                if (!additiveSelectWish)
+                {
+                    slimeList.Clear();
+                    Debug.Log("Shift not held while selecting, list cleared");
+                }
 
-        if (commandWish)
-        {
-            if (slimeList.Count != 0)
+                heldLastFrame = true;
+                Ray ray = cam.ScreenPointToRay(mousePos);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, slimeLayer, QueryTriggerInteraction.Ignore))
+                {
+                    Debug.Log("Hit " + hit.transform.gameObject.name, hit.transform.gameObject);
+
+                    var hitSlime = hit.transform.gameObject.GetComponent<SlimeMotor>();
+
+                    AddOverlappingSlimeMotor(hitSlime);
+
+                }
+                selectWish = false;
+            }
+
+            if (explosionWish)
             {
                 Ray ray = cam.ScreenPointToRay(mousePos);
                 RaycastHit hit;
 
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
+                int overlaps = 0;
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
                 {
+                    overlaps = Physics.OverlapSphereNonAlloc(hit.point, explosionRadius, slimesInExplosionRange, slimeLayer);
 
-                    if (CheckForRigidbodyFromHit(hit))
+                    for (int i = 0; i < overlaps; i++)
                     {
-                        foreach (var slime in slimeList)
-                        {
-                            slime.SetDestination(hit.collider.gameObject.transform);
-                        }
-                    }
+                        var slimeRB = slimesInExplosionRange[i].gameObject.GetComponent<SlimeMotor>().rb;
 
-                    else
-                    {
-                        foreach (var slime in slimeList)
+                        var dir = slimeRB.position - hit.point;
+
+                        Ray losCheck = new(hit.point, dir);
+                        RaycastHit slimeHitCheck;
+
+                        if (Physics.Raycast(losCheck, out slimeHitCheck, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
                         {
-                            slime.SetDestination(hit.point);
+
+                            if (1 << slimeHitCheck.collider.gameObject.layer == slimeLayer)
+                            {
+                                slimeRB.AddExplosionForce(explosionForce, hit.point, explosionRadius, explosionVerticalImpulse, ForceMode.Impulse);
+
+                                if (slimeRB.gameObject.TryGetComponent<Slime>(out var hitSlime))
+                                {
+                                    hitSlime.TakeDamage(1);
+                                }
+
+                                Debug.Log("Explosion applied to: " + slimeRB.gameObject.name, slimeRB.gameObject);
+                            }
+                            else
+                            {
+                                Debug.Log("Explosion could not reach " + slimeRB.gameObject.name, slimeRB.gameObject);
+                            }
                         }
                     }
                 }
+
+                //Debug.Log(overlaps);
+                explosionWish = false;
             }
 
-            commandWish = false;
+            if (commandWish)
+            {
+                if (slimeList.Count != 0)
+                {
+                    Ray ray = cam.ScreenPointToRay(mousePos);
+                    RaycastHit hit;
+
+                    if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~0, QueryTriggerInteraction.Ignore))
+                    {
+
+                        if (CheckForRigidbodyFromHit(hit))
+                        {
+                            foreach (var slime in slimeList)
+                            {
+                                slime.SetDestination(hit.collider.gameObject.transform);
+                            }
+                        }
+
+                        else
+                        {
+                            foreach (var slime in slimeList)
+                            {
+                                slime.SetDestination(hit.point);
+                            }
+                        }
+                    }
+                }
+
+                commandWish = false;
+            }
         }
     }
 

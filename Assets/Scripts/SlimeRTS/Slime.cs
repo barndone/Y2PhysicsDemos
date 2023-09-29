@@ -41,6 +41,9 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
 
     public static event Action<SlimeMotor> removeFromList;
 
+    Color startColor;
+    float timer = 0;
+
     private void Awake()
     {
         CurrentHealth = maxHealth;
@@ -79,13 +82,14 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
 
         if (updateColor)
         {
-            if (currentColor != targetColor)
+
+            if (timer < transitionSpeed)
             {
-                currentColor = Color.Lerp(currentColor, targetColor, transitionSpeed);
+                timer += Time.deltaTime;
+                currentColor = Color.Lerp(startColor, targetColor, timer / transitionSpeed);
                 rend.material.color = currentColor;
             }
-
-            if (currentColor == targetColor)
+            else
             {
                 updateColor = false;
             }
@@ -104,6 +108,24 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
             animator.SetTrigger("death");
         }
 
+        UpdateColor();
+    }
+
+    //  implemented to satisfy IHealable
+    public void Heal(int _value)
+    {
+        //  if the healing value wont heal us past our max health
+        if ((CurrentHealth + _value) <= maxHealth) { CurrentHealth += _value; }
+        //  otherwise, it would put us over our maxHealth, assign currentHealth to maxhealth
+        else { CurrentHealth = maxHealth; }
+
+        UpdateColor();
+    }
+
+    public void UpdateColor()
+    {
+        startColor = rend.material.color;
+
         if (CurrentHealth / (float)maxHealth >= .75f)
         {
             targetColor = slimeColors[0];
@@ -121,16 +143,8 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
             targetColor = slimeColors[3];
         }
 
+        timer = 0.0f;
         updateColor = true;
-    }
-
-    //  implemented to satisfy IHealable
-    public void Heal(int _value)
-    {
-        //  if the healing value wont heal us past our max health
-        if ((CurrentHealth + _value) <= maxHealth) { CurrentHealth += _value; }
-        //  otherwise, it would put us over our maxHealth, assign currentHealth to maxhealth
-        else { CurrentHealth = maxHealth; }
     }
 
 

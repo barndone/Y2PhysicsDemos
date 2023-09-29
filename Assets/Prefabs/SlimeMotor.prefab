@@ -116,8 +116,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verticalStrength: 5
-  horizontalStrength: 2
-  jumpDelay: 3
+  horizontalStrength: 5
+  jumpDelay: 1.5
+  minJumpDelay: 0.5
+  maxJumpDelay: 1.5
   rb: {fileID: 0}
   UseTransformTargeting: 1
   destinationTarget: {fileID: 0}
@@ -291,21 +293,6 @@ MonoBehaviour:
   transitionSpeed: 0.5
   rend: {fileID: 0}
   animator: {fileID: 0}
-  removeFromList:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11500000, guid: 0e934fdfa086df841b995a8d7f524f7b, type: 3}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!95 &576849718586049930
 Animator:
   serializedVersion: 4

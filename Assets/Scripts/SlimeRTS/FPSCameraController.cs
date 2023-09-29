@@ -30,19 +30,22 @@ public class FPSCameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        position = player.transform.position;
-        position.y += yCameraOffset;
-        transform.position = position;
+        if (!GameManager.instance.gameOver)
+        {
+            position = player.transform.position;
+            position.y += yCameraOffset;
+            transform.position = position;
 
-        mouseMovement = Mouse.current.delta.ReadValue();
+            mouseMovement = Mouse.current.delta.ReadValue();
 
-        xRotation -= mouseMovement.y * Time.deltaTime * mouseSens;
+            xRotation -= mouseMovement.y * Time.deltaTime * mouseSens;
 
-        xRotation = Mathf.Clamp(xRotation, -90, 90);
+            xRotation = Mathf.Clamp(xRotation, -90, 90);
 
-        yRotation += mouseMovement.x * Time.deltaTime * mouseSens;
-        transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+            yRotation += mouseMovement.x * Time.deltaTime * mouseSens;
+            transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
 
-        player.transform.localRotation = Quaternion.Euler(0, yRotation, 0);
+            player.transform.localRotation = Quaternion.Euler(0, yRotation, 0);
+        }
     }
 }

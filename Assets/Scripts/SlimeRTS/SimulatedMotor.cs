@@ -158,7 +158,7 @@ public class SimulatedMotor : MonoBehaviour
     //  apply changes to physics object
     private void FixedUpdate()
     {
-        if (GameManager.instance.AvailableSlimes >= 1)
+        if (!GameManager.instance.gameOver)
         {
             Vector3 projectedVelocity = rb.velocity;
 

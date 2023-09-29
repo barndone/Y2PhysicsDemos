@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,8 +23,11 @@ public class GameManager : MonoBehaviour
 
     //  tracks if the game is over
     public bool gameOver = false;
+    private bool gameOverHandled;
 
     [SerializeField] Animator animator;
+
+    public static event Action<bool> panelFadeEvent;
 
     private void Awake()
     {
@@ -38,9 +44,10 @@ public class GameManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (gameOver)
+        if (gameOver && !gameOverHandled)
         {
             HandleGameOver();
+            gameOverHandled = true;
         }
     }
 
@@ -54,56 +61,61 @@ public class GameManager : MonoBehaviour
             livingSlimes.Add(_slime);
         }
     }
+
     //  remove a given slime from the living or selected slimes lists and add to the dead slimes list
     public void AddDeadSlime(SlimeMotor _slime)
     {
-        //  cache the list of selected slimes in the slime picker instance
-        var selectedSlimes = SlimePicker.instance.slimeList;
-        _slime.alive = false;
+        if (!gameOver)
+        {        
+            //  cache the list of selected slimes in the slime picker instance
+            var selectedSlimes = SlimePicker.instance.slimeList;
+            _slime.alive = false;
 
-        // check that no slimes were following this gameobject
-        foreach (var slime in livingSlimes)
-        {
-            if (slime.Target == _slime.gameObject)
+            // check that no slimes were following this gameobject
+            foreach (var slime in livingSlimes)
             {
-                slime.SetDestination(_slime.transform.position);
+                if (slime.Target == _slime.gameObject)
+                {
+                    slime.SetDestination(_slime.transform.position);
+                }
             }
-        }
 
-        //  if the selected slimes list contains this now dead slime
-        if (selectedSlimes.Contains(_slime))
-        {
-            //  remove it
-            selectedSlimes.Remove(_slime);
-        }
+            //  if the selected slimes list contains this now dead slime
+            if (selectedSlimes.Contains(_slime))
+            {
+                //  remove it
+                selectedSlimes.Remove(_slime);
+            }
 
-        //  if the living slimes list contains this slime
-        if (livingSlimes.Contains(_slime))
-        {
-            //  remove it
-            livingSlimes.Remove(_slime);
-        }
+            //  if the living slimes list contains this slime
+            if (livingSlimes.Contains(_slime))
+            {
+                //  remove it
+                livingSlimes.Remove(_slime);
+            }
 
-        //  if this slime isn't already counted as dead
-        if (!deadSlimes.Contains(_slime))
-        {
-            //  remove it
-            deadSlimes.Add(_slime);
-        }
+            //  if this slime isn't already counted as dead
+            if (!deadSlimes.Contains(_slime))
+            {
+                //  remove it
+                deadSlimes.Add(_slime);
+            }
 
-        //  if the available slimes list is empty
-        if (AvailableSlimes == 0)
-        {
-            //  game over
-            gameOver = true;
+            //  if the available slimes list is empty
+            if (AvailableSlimes == 0)
+            {
+                //  game over
+                gameOver = true;
+            }
         }
     }
 
     public void HandleGameOver()
     {
+        bool condition = AvailableSlimes <= 0;
         //  case 1: all of our slimes are dead
         //  loss.meme
-        if (AvailableSlimes <= 0)
+        if (condition)
         {
             RagdollUtils.EnableRagdoll();
             animator.enabled = false;
@@ -116,9 +128,11 @@ public class GameManager : MonoBehaviour
             
         }
 
+        Cursor.lockState = CursorLockMode.Confined;
         //  TODO: implement end screen UI
-    }
+        panelFadeEvent.Invoke(condition);
 
+    }
     public void JointBugHeadShot()
     {
         gameOver = true;
