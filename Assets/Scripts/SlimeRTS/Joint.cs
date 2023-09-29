@@ -15,7 +15,7 @@ public class Joint : MonoBehaviour, IDamageable
 
     public static event Action<Rigidbody> cleanUpReferences;
     public static event Action<Joint> onMouseOverEvent;
-    public static event Action<bool> onMouseExitEvent;
+    public static event Action<string> healthBarDeathCleanupEvent;
 
     public string unitName;
 
@@ -36,7 +36,8 @@ public class Joint : MonoBehaviour, IDamageable
         CurrentHealth -= _damage;
 
         if (CurrentHealth < 0)
-        {
+        {            
+            healthBarDeathCleanupEvent.Invoke(unitName);
             jointBreakEvent.Invoke();
             cleanUpReferences.Invoke(rb);
             Destroy(gameObject);
@@ -81,10 +82,5 @@ public class Joint : MonoBehaviour, IDamageable
     public void OnMouseEnter()
     {
         onMouseOverEvent.Invoke(this);
-    }
-
-    public void OnMouseExit()
-    {
-        onMouseExitEvent.Invoke(true);
     }
 }

@@ -45,7 +45,7 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
 
     public static event Action<SlimeMotor> removeFromList;
     public static event Action<Slime> onMouseOverEvent;
-    public static event Action<bool> onMouseExitEvent;
+    public static event Action<string> healthBarDeathCleanupEvent;
 
 
     Color startColor;
@@ -110,6 +110,7 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
 
         if (CurrentHealth <= 0)
         {
+            healthBarDeathCleanupEvent.Invoke(unitName);
             GameManager.instance.AddDeadSlime(motor);
             animator.enabled = true;
             animator.SetTrigger("death");
@@ -164,10 +165,5 @@ public class Slime : MonoBehaviour, IDamageable, IHealable
     public void OnMouseEnter()
     {
         onMouseOverEvent.Invoke(this);
-    }
-
-    public void OnMouseExit()
-    {
-        onMouseExitEvent.Invoke(true);
     }
 }

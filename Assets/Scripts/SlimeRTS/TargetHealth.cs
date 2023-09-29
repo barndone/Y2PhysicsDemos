@@ -6,27 +6,29 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using Color = UnityEngine.Color;
 
 public class TargetHealth : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI targetName;
     [SerializeField] Image healthBar;
-
     private Joint targetJoint;
     private Slime targetSlime;
-
     private bool hasTarget = false;
+    private string currentTargetName = "";
+    [SerializeField] float lerpSpeed = 3f;
+
+    [SerializeField] GameObject healthBarParent;
 
     private void Awake()
     {
         Slime.onMouseOverEvent += SetTarget;
         Joint.onMouseOverEvent += SetTarget;
 
-        Slime.onMouseExitEvent += ClearTarget;
-        Joint.onMouseExitEvent += ClearTarget;
+        Slime.healthBarDeathCleanupEvent += ClearTarget;
+        Joint.healthBarDeathCleanupEvent += ClearTarget;
 
-        healthBar.gameObject.SetActive(false);
-        targetName.gameObject.SetActive(false);
+        healthBarParent.gameObject.SetActive(false);
     }
 
     private void OnDestroy()
@@ -34,8 +36,8 @@ public class TargetHealth : MonoBehaviour
         Slime.onMouseOverEvent -= SetTarget;
         Joint.onMouseOverEvent -= SetTarget;
 
-        Slime.onMouseExitEvent -= ClearTarget;
-        Joint.onMouseExitEvent -= ClearTarget;
+        Slime.healthBarDeathCleanupEvent -= ClearTarget;
+        Joint.healthBarDeathCleanupEvent -= ClearTarget;
     }
 
     public void Update()
@@ -48,39 +50,50 @@ public class TargetHealth : MonoBehaviour
 
     public void FillHealthBar()
     {
-        healthBar.fillAmount = GetTargetHealthPercentage();
+        healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, GetTargetHealthPercentage(), lerpSpeed * Time.deltaTime);
+        ColorTransition();
+    }
+
+    public void ColorTransition()
+    {
+        var color = Color.Lerp(Color.red, Color.green, GetTargetHealthPercentage());
+        healthBar.color = color;
     }
 
     public void SetTarget(Slime _slime)
     {
-        healthBar.gameObject.SetActive(true);
+        healthBarParent.SetActive(true);
         targetJoint = null;
         targetSlime = _slime;
         FillHealthBar();
         hasTarget = true;
-
-        //  TODO: assign target name
+        targetName.gameObject.SetActive(true);
+        currentTargetName = _slime.unitName;
+        targetName.text = _slime.unitName + " the Slime";
     }
 
     public void SetTarget(Joint _joint)
     {
-        healthBar.gameObject.SetActive(true);
+        healthBarParent.SetActive(true);
         targetJoint = _joint;
         targetSlime = null;
         FillHealthBar();
         hasTarget = true;
-
-        //  TODO: assign target name
+        targetName.gameObject.SetActive(true);
+        currentTargetName = _joint.unitName;
+        targetName.text = _joint.unitName;
     }
 
-    public void ClearTarget(bool _)
+    public void ClearTarget(string _name)
     {
-        hasTarget = false;
-        healthBar.gameObject.SetActive(false);
-        targetJoint = null;
-        targetSlime = null;
-
-        //  TODO: clear / set name text indicator to inactive
+        if (_name.Equals(currentTargetName))
+        {
+            hasTarget = false;
+            healthBarParent.SetActive(false);
+            targetJoint = null;
+            targetSlime = null;
+            currentTargetName = "";
+        }
     }
 
     public float GetTargetHealthPercentage()
