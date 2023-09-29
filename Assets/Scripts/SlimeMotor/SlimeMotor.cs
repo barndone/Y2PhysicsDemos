@@ -1,5 +1,7 @@
+using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SlimeMotor : MonoBehaviour
 {
@@ -40,6 +42,8 @@ public class SlimeMotor : MonoBehaviour
 
     public bool alive = true;
 
+    private AudioSource slimeSource;
+
 
     private void Awake()
     {
@@ -62,6 +66,13 @@ public class SlimeMotor : MonoBehaviour
         {
             Debug.LogError("No LineRenderer component attached to " + this.name, this);
         }
+
+        if (TryGetComponent<AudioSource>(out slimeSource))
+        {
+            //  do nothing
+        }
+
+        else { Debug.LogError("No AudioSource component attached to " + this.name, this); }
 
         lineRend.transform.position = transform.position;
     }
@@ -107,6 +118,7 @@ public class SlimeMotor : MonoBehaviour
             rb.AddForce(force, ForceMode.Impulse);
             grounded = false;
             jumpWish = false;
+            slimeSource.PlayOneShot(AudioManager.instance.GetSlimeImpactSound());
         }
 
         if (levelUpWish)
@@ -132,6 +144,16 @@ public class SlimeMotor : MonoBehaviour
             grounded = true;
 
             DrawPath();
+        }
+
+        slimeSource.PlayOneShot(AudioManager.instance.GetSlimeImpactSound());
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (1 << collision.gameObject.layer == groundLayer)
+        {
+            grounded = false;
         }
     }
 

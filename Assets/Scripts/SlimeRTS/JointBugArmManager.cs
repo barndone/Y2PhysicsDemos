@@ -45,6 +45,8 @@ public class JointBugArmManager : MonoBehaviour
     public static event Action<JointBugArmManager> partBroken;
 
     [SerializeField] LayerMask slimeLayer;
+
+    [SerializeField] AudioSource armSource;
  
     public void ActivateLimb()
     {
@@ -66,6 +68,13 @@ public class JointBugArmManager : MonoBehaviour
     private void Awake()
     {
         Slime.removeFromList += RemoveDeadSlime;
+
+        if (TryGetComponent<AudioSource>(out armSource))
+        {
+            //  do nothing
+        }
+
+        else { Debug.LogError("No AudioSource component attached to " + this.name, this); }
     }
 
     private void OnDestroy()
@@ -117,6 +126,8 @@ public class JointBugArmManager : MonoBehaviour
         {
             lowerArm.AddForce(Vector3.up * lowerArmLift, ForceMode.Impulse);
         }
+
+        armSource.PlayOneShot(AudioManager.instance.GetRandomJumpSound());
     }
 
     public void ResolveAttackEnd()
@@ -149,6 +160,8 @@ public class JointBugArmManager : MonoBehaviour
 
             ResolveAttackEnd();
         }
+
+        armSource.PlayOneShot(AudioManager.instance.GetRandomImpactSound());
     }
 
     public void RemoveDeadSlime(SlimeMotor _deadSlime)
